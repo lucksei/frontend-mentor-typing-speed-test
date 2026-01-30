@@ -5,6 +5,7 @@ import Settings from './components/Settings.vue'
 import TypingTest from './components/TypingTest.vue'
 import TestNotStartedModal from './components/TestNotStartedModal.vue'
 import TestComplete from './components/TestComplete.vue'
+import Attribution from './components/Attribution.vue'
 
 import LogoSmall from './components/images/LogoSmall.vue'
 import IconPersonalBest from './components/images/IconPersonalBest.vue'
@@ -24,4 +25,5 @@ const personalBest = ref(92)
   <TestNotStartedModal />
   <TypingTest />
   <TestComplete />
+  <Attribution />
 </template>
