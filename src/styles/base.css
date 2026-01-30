@@ -1,0 +1,42 @@
+@font-face {
+  font-family: 'Sora';
+  src: url('/src/assets/fonts/Sora/Sora-VariableFont_wght.ttf') format('truetype');
+  font-display: swap;
+}
+
+:root {
+  /* The designs were created to the following widths */
+  --max-width-mobile: 375px;
+  --max-width-desktop: 1440px;
+  /* Colors */
+  --colors-neutral-900: hsl(0, 0%, 7%);
+  --colors-neutral-800: hsl(0, 0%, 15%);
+  --colors-neutral-500: hsl(240, 3%, 46%);
+  --colors-neutral-400: hsl(240, 1%, 59%);
+  --colors-neutral-0: hsl(0, 0%, 100%);
+  --colors-blue-600: hsl(214, 100%, 55%);
+  --colors-blue-400: hsl(210, 100%, 65%);
+  --colors-red-500: hsl(354, 63%, 57%);
+  --colors-green-500: hsl(140, 63%, 57%);
+  --colors-yellow-400: hsl(49, 85%, 70%);
+  /* Typography */
+  --font-size: 16px;
+  --font-family: 'Sora';
+  --weight-bold: 700;
+  --weight-semi-bold: 600;
+  --weight-normal: 400;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size);
+  color: var(--colors-neutral-0);
+  font-weight: var(--weight-normal);
+  line-height: 1.6;
+}
