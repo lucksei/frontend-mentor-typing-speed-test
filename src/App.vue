@@ -1,29 +1,26 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import AppHeader from './components/AppHeader.vue'
+import AppSettings from './components/AppSettings.vue'
+import AppAttribution from './components/AppAttribution.vue'
 
-import Settings from './components/Settings.vue'
-import TypingTest from './components/TypingTest.vue'
-import TestNotStartedModal from './components/TestNotStartedModal.vue'
-import TestComplete from './components/TestComplete.vue'
-import Attribution from './components/Attribution.vue'
-
-import LogoSmall from './components/images/LogoSmall.vue'
-import IconPersonalBest from './components/images/IconPersonalBest.vue'
-
-const personalBest = ref(92)
+// import AppTypingTest from './components/AppTypingTest.vue'
+// import TestNotStartedModal from './components/TestNotStartedModal.vue'
+// import TestComplete from './components/TestComplete.vue'
 </script>
 
 <template>
-  <header>
-    <LogoSmall />
-    <div>
-      <IconPersonalBest />
-      Best: {{ `${personalBest} WPM` }}
-    </div>
-  </header>
-  <Settings />
-  <TestNotStartedModal />
-  <TypingTest />
-  <TestComplete />
-  <Attribution />
+  <AppHeader />
+  <div class="app">
+    <AppSettings />
+    <!-- <TestNotStartedModal /> -->
+    <!-- <AppTypingTest />
+    <TestComplete /> -->
+    <AppAttribution />
+  </div>
 </template>
+
+<style scoped>
+.app {
+  padding: 0 1rem 0 1rem;
+}
+</style>

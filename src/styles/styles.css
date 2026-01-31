@@ -4,3 +4,32 @@
 body {
   background-color: var(--colors-neutral-900);
 }
+
+.text-primary {
+  color: var(--colors-neutral-0);
+}
+
+.text-secondary {
+  color: var(--colors-neutral-500);
+}
+
+img {
+  margin: 0;
+  padding: 0;
+}
+
+.icon-image {
+  height: 1rem;
+}
+
+button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1.5rem 0.4rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: var(--font-size);
+  font-family: var(--font-family);
+  cursor: pointer;
+}

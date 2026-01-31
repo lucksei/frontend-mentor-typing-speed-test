@@ -21,6 +21,7 @@
   --colors-yellow-400: hsl(49, 85%, 70%);
   /* Typography */
   --font-size: 16px;
+  --font-size-sm: 12px;
   --font-family: 'Sora';
   --weight-bold: 700;
   --weight-semi-bold: 600;
@@ -31,11 +32,11 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: var(--font-family);
+  font-size: var(--font-size);
 }
 
 body {
-  font-family: var(--font-family);
-  font-size: var(--font-size);
   color: var(--colors-neutral-0);
   font-weight: var(--weight-normal);
   line-height: 1.6;
