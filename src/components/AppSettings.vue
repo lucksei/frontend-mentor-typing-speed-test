@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import SettingsDropdown from './dropdown/SettingsDropdown.vue'
+import SettingsDropdown from './settingsDropdown/SettingsDropdown.vue'
+import MetricsContainer from './MetricsContainer.vue'
+import VerticalDivider from './VerticalDivider.vue'
 
 const wpm = ref(40)
 const accuracy = ref(0.94)
-const time = ref('0:46')
+const time = ref(46)
 
 // TODO: add type or interface for "Difficulty"
 //       Easy | Medium | Hard
@@ -16,10 +18,12 @@ const time = ref('0:46')
 </script>
 
 <template>
-  <div>
-    <div>WPM: {{ wpm }}</div>
-    <div>Accuracy: {{ `${accuracy * 100}%` }}</div>
-    <div>Time: {{ time }}</div>
+  <div class="metrics-container">
+    <MetricsContainer type="wpm" :value="wpm" />
+    <VerticalDivider />
+    <MetricsContainer type="accuracy" :value="accuracy" />
+    <VerticalDivider />
+    <MetricsContainer type="time" :value="time" />
   </div>
   <div class="settings-container">
     <SettingsDropdown label="Hard" />
@@ -28,11 +32,20 @@ const time = ref('0:46')
 </template>
 
 <style scoped>
+.metrics-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  gap: 1rem;
+  align-items: center;
+  padding: 0 1.2rem 0 1.2rem;
+  margin-bottom: 1rem; /* TODO delete */
+}
 .settings-container {
   display: flex;
   flex-direction: row;
   gap: 1rem;
-  justify-content: left;
+  justify-content: space-between;
   align-items: center;
 }
 </style>

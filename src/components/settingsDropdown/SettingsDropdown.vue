@@ -40,6 +40,7 @@ const handleClickOutside = () => {
 .dropdown {
   position: relative;
   min-width: 10rem;
+  width: 100%;
 }
 
 .dropdown-content {

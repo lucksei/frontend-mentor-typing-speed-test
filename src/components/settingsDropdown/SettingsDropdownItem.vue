@@ -34,10 +34,14 @@ const handleClick = () => {
     cursor: pointer;
   }
 
+  span:hover {
+    color: var(--colors-neutral-500);
+  }
+
   span:after {
     content: '';
     position: absolute;
-    bottom: 0.3rem;
+    bottom: 0;
     left: 0.6rem;
     width: calc(100% - 1.2rem);
     height: 1px;
