@@ -1,6 +1,4 @@
-<scrip setup>
-
-</scrip>
+<scrip setup lang="ts"></scrip>
 
 <template>
   <div class="divider" />

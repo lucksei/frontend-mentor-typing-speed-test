@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import SettingsDropdown from './settingsDropdown/SettingsDropdown.vue'
 import MetricsContainer from './MetricsContainer.vue'
-import VerticalDivider from './VerticalDivider.vue'
+import CustomDivider from './CustomDivider.vue'
 
 const wpm = ref(40)
 const accuracy = ref(0.94)
@@ -20,9 +20,9 @@ const time = ref(46)
 <template>
   <div class="metrics-container">
     <MetricsContainer type="wpm" :value="wpm" />
-    <VerticalDivider />
+    <CustomDivider />
     <MetricsContainer type="accuracy" :value="accuracy" />
-    <VerticalDivider />
+    <CustomDivider />
     <MetricsContainer type="time" :value="time" />
   </div>
   <div class="settings-container">
@@ -39,7 +39,7 @@ const time = ref(46)
   gap: 1rem;
   align-items: center;
   padding: 0 1.2rem 0 1.2rem;
-  margin-bottom: 1rem; /* TODO delete */
+  margin-bottom: 0.8rem; /* TODO delete */
 }
 .settings-container {
   display: flex;
@@ -47,5 +47,6 @@ const time = ref(46)
   gap: 1rem;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 0.8rem;
 }
 </style>

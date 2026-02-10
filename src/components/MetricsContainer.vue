@@ -24,7 +24,12 @@ switch (props.type) {
 <template>
   <div class="metric-container">
     <div class="text-secondary">{{ `${type[0]?.toUpperCase()}${type.slice(1)}:` }}</div>
-    <div class="metric">{{ value }}</div>
+    <div
+      class="metric"
+      :class="props.type === 'accuracy' ? 'red' : props.type === 'time' ? 'yellow' : null"
+    >
+      {{ displayValue }}
+    </div>
   </div>
 </template>
 
@@ -39,5 +44,13 @@ switch (props.type) {
 .metric {
   font-size: var(--font-size-medium);
   font-weight: var(--weight-bold);
+}
+
+.red {
+  color: var(--colors-red-500);
+}
+
+.yellow {
+  color: var(--colors-yellow-400);
 }
 </style>

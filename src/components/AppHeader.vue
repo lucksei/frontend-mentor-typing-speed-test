@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 
 import LogoSmall from '/src/components/images/LogoSmall.vue'

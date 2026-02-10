@@ -2,8 +2,8 @@
 import AppHeader from './components/AppHeader.vue'
 import AppSettings from './components/AppSettings.vue'
 import AppAttribution from './components/AppAttribution.vue'
-
-// import AppTypingTest from './components/AppTypingTest.vue'
+import CustomDivider from './components/CustomDivider.vue'
+import AppTypingTest from './components/AppTypingTest.vue'
 // import TestNotStartedModal from './components/TestNotStartedModal.vue'
 // import TestComplete from './components/TestComplete.vue'
 </script>
@@ -12,9 +12,10 @@ import AppAttribution from './components/AppAttribution.vue'
   <AppHeader />
   <div class="app">
     <AppSettings />
+    <CustomDivider />
     <!-- <TestNotStartedModal /> -->
-    <!-- <AppTypingTest />
-    <TestComplete /> -->
+    <AppTypingTest />
+    <!-- <TestComplete /> -->
     <AppAttribution />
   </div>
 </template>
