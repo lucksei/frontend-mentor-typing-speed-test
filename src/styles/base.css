@@ -23,7 +23,7 @@
   --font-size: 16px;
   --font-size-sm: 12px;
   --font-size-medium: 22px;
-  --font-size-large: 24px;
+  --font-size-large: 36px;
   --font-family: 'Sora';
   --weight-bold: 700;
   --weight-semi-bold: 600;
@@ -35,11 +35,11 @@
   padding: 0;
   box-sizing: border-box;
   font-family: var(--font-family);
-  font-size: var(--font-size);
 }
 
 body {
   color: var(--colors-neutral-0);
   font-weight: var(--weight-normal);
+  font-size: var(--font-size);
   line-height: 1.6;
 }
