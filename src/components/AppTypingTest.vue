@@ -5,7 +5,7 @@ import TypingTest from '@/utils/typingTest'
 const textRef = useTemplateRef('text-ref')
 
 const typingTest = new TypingTest(
-  'The archaeological expedition unearthed artifacts that complicated prevailing theories about Bronze Age trade networks. Obsidian from Anatolia, lapis lazuli from Afghanistan, and amber from the Baltic—all discovered in a single Mycenaean tomb—suggested commercial connections far more extensive than previously hypothesized. \"We\'ve underestimated ancient peoples\' navigational capabilities and their appetite for luxury goods,\" the lead researcher observed. \"Globalization isn\'t as modern as we assume.\"',
+  'Coffee culture has evolved dramatically in recent decades. What was once a simple morning ritual has become an art form, with baristas crafting intricate latte designs and roasters sourcing beans from remote mountain villages. The humble cup of coffee now tells a global story.',
 )
 
 const textArray = shallowRef(typingTest.getText())
@@ -56,12 +56,21 @@ const updateScroll = () => {
   if (!textRef.value) return
   const currentWord = textRef.value.querySelector(`[data-id="${cursor.value.word_idx}"]`)
   if (!currentWord) return
-  currentWord.scrollIntoView({ block: 'start', inline: 'start', behavior: 'smooth' })
+  console.log(currentWord.attributes.getNamedItem('data-id'))
+  const wordRect = currentWord.getBoundingClientRect().top
+  console.log(wordRect)
+
+  currentWord.scrollIntoView({
+    block: 'start',
+    inline: 'end',
+    behavior: 'smooth',
+  })
 }
 
 onMounted(() => {
   if (!textRef.value) return
   textRef.value.addEventListener('keydown', handleKeyPress)
+  updateScroll()
 })
 </script>
 
@@ -91,19 +100,26 @@ onMounted(() => {
 
 <style scoped>
 .typing-test-container {
+  display: flex;
+  flex-direction: column;
   min-height: 0;
   flex: 1;
-  overflow: scroll;
+  overflow: hidden;
   padding: 1rem 0 1rem 0;
 }
+
 .text {
-  font-size: var(--font-size-large);
+  display: inline-flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   flex-shrink: 1;
+  font-size: var(--font-size-large);
   min-height: 0;
 }
 
 .word::after {
   content: ' ';
+  margin-left: 0.5rem;
 }
 
 .char.empty {
