@@ -84,12 +84,14 @@ class TypingTest {
 
   _cursorBacktrack(): number {
     if (typeof this.cursor.char_idx === 'number') {
-      this.text[this.cursor.word_idx]!.word[this.cursor.char_idx]!.status = 'empty'
       if (this.cursor.char_idx === 0) {
+        if (this.cursor.word_idx === 0) return 1
+        this.text[this.cursor.word_idx]!.word[this.cursor.char_idx]!.status = 'empty'
         this.cursor.word_idx -= 1
         this.cursor.char_idx = 'end'
         return 0
       }
+      this.text[this.cursor.word_idx]!.word[this.cursor.char_idx]!.status = 'empty'
       this.cursor.char_idx -= 1
       this.text[this.cursor.word_idx]!.word[this.cursor.char_idx]!.status = 'selected'
       return 0
@@ -104,6 +106,10 @@ class TypingTest {
 
   getText(): Word[] {
     return this.text
+  }
+
+  getCursor(): Cursor {
+    return this.cursor
   }
 
   sendKeyStroke(key: string) {

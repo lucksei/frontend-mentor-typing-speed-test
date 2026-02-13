@@ -4,40 +4,84 @@ import TypingTest from '@/utils/typingTest'
 
 const textRef = useTemplateRef('text-ref')
 
-const testText =
-  'The archaeological expedition unearthed artifacts that complicated prevailing theories about Bronze Age trade networks. Obsidian from Anatolia, lapis lazuli from Afghanistan, and amber from the Baltic—all discovered in a single Mycenaean tomb—suggested commercial connections far more extensive than previously hypothesized. \"We\'ve underestimated ancient peoples\' navigational capabilities and their appetite for luxury goods,\" the lead researcher observed. \"Globalization isn\'t as modern as we assume.\"'
+const typingTest = new TypingTest(
+  'The archaeological expedition unearthed artifacts that complicated prevailing theories about Bronze Age trade networks. Obsidian from Anatolia, lapis lazuli from Afghanistan, and amber from the Baltic—all discovered in a single Mycenaean tomb—suggested commercial connections far more extensive than previously hypothesized. \"We\'ve underestimated ancient peoples\' navigational capabilities and their appetite for luxury goods,\" the lead researcher observed. \"Globalization isn\'t as modern as we assume.\"',
+)
 
-const typingTest = new TypingTest(testText)
 const textArray = shallowRef(typingTest.getText())
+const cursor = shallowRef(typingTest.getCursor())
+
+const ignoredCharacters = [
+  'Control',
+  'Shift',
+  'Meta',
+  'Escape',
+  'Tab',
+  'F1',
+  'F2',
+  'F3',
+  'F4',
+  'F5',
+  'F6',
+  'F7',
+  'F8',
+  'F9',
+  'F10',
+  'F11',
+  'F12',
+]
 
 const handleKeyPress = (event: KeyboardEvent) => {
   event.preventDefault()
-  if (['Control', 'Shift', 'Meta', 'Escape', 'Tab'].includes(event.key)) return
+  if (ignoredCharacters.includes(event.key)) return
   if (event.key === 'Backspace') {
     typingTest.sendBackspace()
     textArray.value = [...typingTest.getText()]
+    updateScroll()
     return
   }
   if (event.key === ' ') {
     typingTest.sendSpace()
     textArray.value = [...typingTest.getText()]
+    updateScroll()
     return
   }
   typingTest.sendKeyStroke(event.key)
   textArray.value = [...typingTest.getText()]
+  updateScroll()
 }
+
+const updateScroll = () => {
+  cursor.value = typingTest.getCursor()
+  if (!textRef.value) return
+  const currentWord = textRef.value.querySelector(`[data-id="${cursor.value.word_idx}"]`)
+  if (!currentWord) return
+  currentWord.scrollIntoView({ block: 'start', inline: 'start', behavior: 'smooth' })
+}
+
 onMounted(() => {
-  if (textRef.value) {
-    textRef.value.addEventListener('keydown', handleKeyPress)
-  }
+  if (!textRef.value) return
+  textRef.value.addEventListener('keydown', handleKeyPress)
 })
 </script>
 
 <template>
   <div class="typing-test-container">
     <p class="text" tabindex="-1" ref="text-ref">
-      <span class="word" :class="word.status" v-for="word in textArray" :key="word.id">
-        <span class="char" :class="char.status" v-for="char in word.word" :key="char.id">
+      <span
+        class="word"
+        :class="word.status"
+        v-for="word in textArray"
+        :key="word.id"
+        :data-id="word.id"
+      >
+        <span
+          class="char"
+          :class="char.status"
+          v-for="char in word.word"
+          :key="char.id"
+          :data-id="char.id"
+        >
           {{ char.char }}
         </span>
       </span>
@@ -47,14 +91,17 @@ onMounted(() => {
 
 <style scoped>
 .typing-test-container {
-  display: flex;
-  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+  overflow: scroll;
   padding: 1rem 0 1rem 0;
 }
 .text {
   font-size: var(--font-size-large);
-  /* color: var(--colors-neutral-500); */
+  flex-shrink: 1;
+  min-height: 0;
 }
+
 .word::after {
   content: ' ';
 }

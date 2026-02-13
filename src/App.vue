@@ -9,12 +9,13 @@ import AppTypingTest from './components/AppTypingTest.vue'
 </script>
 
 <template>
-  <AppHeader />
   <div class="app">
+    <AppHeader />
     <AppSettings />
     <CustomDivider />
     <!-- <TestNotStartedModal /> -->
     <AppTypingTest />
+    <CustomDivider />
     <!-- <TestComplete /> -->
     <AppAttribution />
   </div>
@@ -22,6 +23,10 @@ import AppTypingTest from './components/AppTypingTest.vue'
 
 <style scoped>
 .app {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
   padding: 0 1rem 0 1rem;
+  height: 100vh;
 }
 </style>

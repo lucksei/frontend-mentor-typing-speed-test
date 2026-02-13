@@ -28,7 +28,7 @@ const personalBest = ref(92)
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1rem 1rem 1rem;
+  padding: 1rem 0rem 1rem 0rem;
 }
 .logo {
   height: min-content;
