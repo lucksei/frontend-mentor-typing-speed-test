@@ -7,6 +7,16 @@ import CustomDivider from './CustomDivider.vue'
 const wpm = ref(40)
 const accuracy = ref(0.94)
 const time = ref(46)
+const difficulty = ref<string | undefined>('hard')
+const timeMode = ref<string | undefined>('timed')
+
+const handleDifficultySelect = (value: string) => {
+  difficulty.value = value
+}
+
+const handleModeSelect = (value: string) => {
+  timeMode.value = value
+}
 
 // TODO: add type or interface for "Difficulty"
 //       Easy | Medium | Hard
@@ -26,8 +36,27 @@ const time = ref(46)
     <MetricsContainer type="time" :value="time" />
   </div>
   <div class="settings-container">
-    <SettingsDropdown label="Hard" />
-    <SettingsDropdown label="Timed (60s)" />
+    <SettingsDropdown
+      label="Difficulty"
+      name="difficulty"
+      :options="[
+        { label: 'Easy', value: 'easy' },
+        { label: 'Medium', value: 'medium' },
+        { label: 'Hard', value: 'hard' },
+      ]"
+      @select="handleDifficultySelect"
+      :selected-option="difficulty"
+    />
+    <SettingsDropdown
+      label="Mode"
+      name="mode"
+      :options="[
+        { label: 'Timed (60s)', value: 'timed' },
+        { label: 'Passage', value: 'passage' },
+      ]"
+      @select="handleModeSelect"
+      :selected-option="timeMode"
+    />
   </div>
 </template>
 

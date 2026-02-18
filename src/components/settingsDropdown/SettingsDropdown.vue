@@ -3,8 +3,18 @@ import { ref } from 'vue'
 import SettingsDropdownButton from './SettingsDropdownButton.vue'
 import SettingsDropdownItem from './SettingsDropdownItem.vue'
 
+const emit = defineEmits(['select'])
+
+type SettingsDropdownOption = {
+  label?: string
+  value?: string
+}
+
 const props = defineProps<{
   label?: string
+  name?: string
+  options: SettingsDropdownOption[]
+  selectedOption?: string
 }>()
 
 const isOpen = ref(false)
@@ -16,22 +26,43 @@ const handleButtonClick = () => {
 const handleClickOutside = () => {
   isOpen.value = false
 }
+
+const handleItemClick = (value: string) => {
+  emit('select', value)
+  isOpen.value = false
+}
 </script>
 
 <template>
   <div class="dropdown">
     <SettingsDropdownButton
-      :label="props.label"
+      :label="
+        props.options.find((o) => o.value === props.selectedOption)?.label ?? props.label ?? ''
+      "
       @click="handleButtonClick"
       @click-outside="handleClickOutside"
       :isOpen="isOpen"
+      aria-haspopup="listbox"
+      :aria-expanded="isOpen"
+      :aria-controls="`settings-dropdown-${props.name}`"
     />
-    <ul class="dropdown-content" v-bind:class="isOpen ? 'dropdown-show' : 'dropdown-hide'">
-      <slot>
-        <SettingsDropdownItem value="item-1" label="Item 1" @click="console.log('clicked')" />
-        <SettingsDropdownItem value="item-2" label="Item 2" />
-        <SettingsDropdownItem value="item-3" label="Item 2" />
-      </slot>
+    <ul
+      role="listbox"
+      :id="`settings-dropdown-${props.name}`"
+      class="dropdown-content"
+      v-bind:class="isOpen ? 'dropdown-show' : 'dropdown-hide'"
+      :aria-hidden="!isOpen"
+    >
+      <SettingsDropdownItem
+        v-for="option in props.options"
+        :value="option.value"
+        :label="option.label"
+        :key="option.value"
+        @click="handleItemClick"
+      />
+      <!-- <slot>
+        <SettingsDropdownItem value="" label="- - -" />
+      </slot> -->
     </ul>
   </div>
 </template>

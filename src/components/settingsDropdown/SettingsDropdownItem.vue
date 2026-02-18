@@ -6,7 +6,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['click'])
 
-const handleClick = () => {
+const handleClick = (): void => {
   emit('click', props.value)
 }
 </script>
