@@ -15,7 +15,6 @@ import AppTypingTest from './components/AppTypingTest.vue'
     <CustomDivider />
     <!-- <TestNotStartedModal /> -->
     <AppTypingTest />
-    <CustomDivider />
     <!-- <TestComplete /> -->
     <AppAttribution />
   </div>

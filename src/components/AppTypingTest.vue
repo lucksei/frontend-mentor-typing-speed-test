@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { onMounted, shallowRef, useTemplateRef } from 'vue'
 import TypingTest from '@/utils/typingTest'
+import CustomDivider from './CustomDivider.vue'
+import IconRestart from './images/IconRestart.vue'
 
 const textRef = useTemplateRef('text-ref')
 
@@ -48,6 +50,15 @@ const handleKeyPress = (event: KeyboardEvent) => {
   }
   typingTest.sendKeyStroke(event.key)
   textArray.value = [...typingTest.getText()]
+  console.log(typingTest.getWpm())
+  updateScroll()
+}
+
+const handleRestart = (event: Event) => {
+  event.preventDefault()
+  typingTest.resetTest()
+  textRef.value?.focus()
+  textArray.value = [...typingTest.getText()]
   updateScroll()
 }
 
@@ -56,12 +67,9 @@ const updateScroll = () => {
   if (!textRef.value) return
   const currentWord = textRef.value.querySelector(`[data-id="${cursor.value.word_idx}"]`)
   if (!currentWord) return
-  console.log(currentWord.attributes.getNamedItem('data-id'))
-  const wordRect = currentWord.getBoundingClientRect().top
-  console.log(wordRect)
 
   currentWord.scrollIntoView({
-    block: 'start',
+    block: 'center',
     inline: 'end',
     behavior: 'smooth',
   })
@@ -95,6 +103,13 @@ onMounted(() => {
         </span>
       </span>
     </p>
+  </div>
+  <div class="typing-test-footer">
+    <CustomDivider />
+    <button class="restart-btn" @click="handleRestart">
+      Restart Test
+      <IconRestart />
+    </button>
   </div>
 </template>
 
@@ -137,8 +152,34 @@ onMounted(() => {
   text-decoration-thickness: 0.2rem;
 }
 
-.char.selected {
-  background-color: var(--colors-neutral-800);
+.text .char.selected {
   color: var(--colors-neutral-500);
+}
+.text:focus .char.selected {
+  background-color: var(--colors-neutral-800);
+}
+
+.typing-test-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: start;
+  margin: 1rem 0 0 0;
+
+  .restart-btn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: var(--font-size);
+    font-weight: var(--weight-semi-bold);
+    color: var(--colors-neutral-0);
+    background-color: var(--colors-neutral-800);
+    padding: 1rem 1.4rem 1rem 1.4rem;
+    margin: 1.8rem 0 1.8rem 0;
+    border: none;
+    cursor: pointer;
+  }
 }
 </style>
