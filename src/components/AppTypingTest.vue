@@ -155,6 +155,7 @@ onMounted(() => {
 .text .char.selected {
   color: var(--colors-neutral-500);
 }
+
 .text:focus .char.selected {
   background-color: var(--colors-neutral-800);
 }
