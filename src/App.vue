@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { provide, ref } from 'vue'
+import { onMounted, onUnmounted, provide, ref } from 'vue'
 import AppHeader from './components/AppHeader.vue'
 import AppSettings from './components/AppSettings.vue'
 import AppAttribution from './components/AppAttribution.vue'
@@ -27,8 +27,20 @@ const mode = ref<string | undefined>(undefined)
 const handleTypingTestChange = () => {
   wpm.value = typingTest.value.getWpm()
   accuracy.value = typingTest.value.getAccuracy()
+  time.value = Date.now() - typingTest.value.getStartTime()
   console.log(`change, wpm=${wpm.value}, accuracy=${accuracy.value}`)
 }
+let timer: ReturnType<typeof setInterval>
+
+onMounted(() => {
+  timer = setInterval(() => {
+    time.value = Date.now() - typingTest.value.getStartTime()
+  }, 100)
+})
+
+onUnmounted(() => {
+  clearInterval(timer)
+})
 </script>
 
 <template>

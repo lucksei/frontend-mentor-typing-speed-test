@@ -72,7 +72,7 @@ class TypingTest {
       { correct: 0, incorrect: 0 },
     )
     if (count.correct + count.incorrect === 0) return 0
-    return (count.correct / (count.correct + count.incorrect)) * 100
+    return count.correct / (count.correct + count.incorrect)
   }
 
   getStartTime(): number {

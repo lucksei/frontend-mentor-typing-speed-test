@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watchEffect } from 'vue'
 
 const props = defineProps<{
   type: 'wpm' | 'accuracy' | 'time'
@@ -10,13 +10,13 @@ const displayValue = ref('')
 
 switch (props.type) {
   case 'wpm':
-    displayValue.value = `${props.value}`
+    watchEffect(() => (displayValue.value = `${Math.floor(props.value)}`))
     break
   case 'accuracy':
-    displayValue.value = `${props.value * 100}%`
+    watchEffect(() => (displayValue.value = `${Math.floor(props.value * 100)}%`))
     break
   case 'time':
-    displayValue.value = `${new Date(props.value * 1000).toISOString().slice(14, 19)}`
+    watchEffect(() => (displayValue.value = `${new Date(props.value).toISOString().slice(14, 19)}`))
     break
 }
 </script>
