@@ -1,39 +1,26 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import SettingsDropdown from './settingsDropdown/SettingsDropdown.vue'
 import MetricsContainer from './MetricsContainer.vue'
 import CustomDivider from './CustomDivider.vue'
 
-const wpm = ref(40)
-const accuracy = ref(0.94)
-const time = ref(46)
-const difficulty = ref<string | undefined>('hard')
-const timeMode = ref<string | undefined>('timed')
+const props = defineProps<{
+  wpm?: number
+  accuracy?: number
+  time?: number
+  difficulty?: string
+  timeMode?: string
+}>()
 
-const handleDifficultySelect = (value: string) => {
-  difficulty.value = value
-}
-
-const handleModeSelect = (value: string) => {
-  timeMode.value = value
-}
-
-// TODO: add type or interface for "Difficulty"
-//       Easy | Medium | Hard
-// const difficulty = ref('Hard')
-
-// TODO: add type or interface for "Mode"
-//       Timed (60s) | Passage
-// const timeMode = ref('Timed (60s)')
+const emit = defineEmits(['changeDifficulty', 'changeMode'])
 </script>
 
 <template>
   <div class="metrics-container">
-    <MetricsContainer type="wpm" :value="wpm" />
+    <MetricsContainer type="wpm" :value="props.wpm || 0" />
     <CustomDivider />
-    <MetricsContainer type="accuracy" :value="accuracy" />
+    <MetricsContainer type="accuracy" :value="props.accuracy || 0" />
     <CustomDivider />
-    <MetricsContainer type="time" :value="time" />
+    <MetricsContainer type="time" :value="props.time || 0" />
   </div>
   <div class="settings-container">
     <SettingsDropdown
@@ -44,7 +31,7 @@ const handleModeSelect = (value: string) => {
         { label: 'Medium', value: 'medium' },
         { label: 'Hard', value: 'hard' },
       ]"
-      @select="handleDifficultySelect"
+      @select="emit('changeDifficulty', $event)"
       :selected-option="difficulty"
     />
     <SettingsDropdown
@@ -54,7 +41,7 @@ const handleModeSelect = (value: string) => {
         { label: 'Timed (60s)', value: 'timed' },
         { label: 'Passage', value: 'passage' },
       ]"
-      @select="handleModeSelect"
+      @select="emit('changeMode', $event)"
       :selected-option="timeMode"
     />
   </div>

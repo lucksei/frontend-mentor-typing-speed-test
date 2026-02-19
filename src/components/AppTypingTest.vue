@@ -1,37 +1,19 @@
 <script setup lang="ts">
-import { onMounted, shallowRef, useTemplateRef } from 'vue'
-import TypingTest from '@/utils/typingTest'
+import { onMounted, useTemplateRef, shallowRef, inject } from 'vue'
 import CustomDivider from './CustomDivider.vue'
 import IconRestart from './images/IconRestart.vue'
+import { typingTestKey } from '@/utils/injectionKeys'
+import { ignoredCharacters } from '@/utils/ignoredCharacters'
 
-const textRef = useTemplateRef('text-ref')
+const emit = defineEmits(['change'])
 
-const typingTest = new TypingTest(
-  'Coffee culture has evolved dramatically in recent decades. What was once a simple morning ritual has become an art form, with baristas crafting intricate latte designs and roasters sourcing beans from remote mountain villages. The humble cup of coffee now tells a global story.',
-)
+const typingTest = inject(typingTestKey)?.value
+if (!typingTest) throw new Error('TypingTest not provided')
 
 const textArray = shallowRef(typingTest.getText())
 const cursor = shallowRef(typingTest.getCursor())
 
-const ignoredCharacters = [
-  'Control',
-  'Shift',
-  'Meta',
-  'Escape',
-  'Tab',
-  'F1',
-  'F2',
-  'F3',
-  'F4',
-  'F5',
-  'F6',
-  'F7',
-  'F8',
-  'F9',
-  'F10',
-  'F11',
-  'F12',
-]
+const textElementRef = useTemplateRef('text-ref')
 
 const handleKeyPress = (event: KeyboardEvent) => {
   event.preventDefault()
@@ -39,33 +21,36 @@ const handleKeyPress = (event: KeyboardEvent) => {
   if (event.key === 'Backspace') {
     typingTest.sendBackspace()
     textArray.value = [...typingTest.getText()]
+    emit('change')
     updateScroll()
     return
   }
   if (event.key === ' ') {
     typingTest.sendSpace()
     textArray.value = [...typingTest.getText()]
+    emit('change')
     updateScroll()
     return
   }
   typingTest.sendKeyStroke(event.key)
   textArray.value = [...typingTest.getText()]
-  console.log(typingTest.getWpm())
+  emit('change')
   updateScroll()
 }
 
 const handleRestart = (event: Event) => {
   event.preventDefault()
   typingTest.resetTest()
-  textRef.value?.focus()
+  textElementRef.value?.focus()
   textArray.value = [...typingTest.getText()]
+  emit('change')
   updateScroll()
 }
 
 const updateScroll = () => {
   cursor.value = typingTest.getCursor()
-  if (!textRef.value) return
-  const currentWord = textRef.value.querySelector(`[data-id="${cursor.value.word_idx}"]`)
+  if (!textElementRef.value) return
+  const currentWord = textElementRef.value.querySelector(`[data-id="${cursor.value.word_idx}"]`)
   if (!currentWord) return
 
   currentWord.scrollIntoView({
@@ -76,8 +61,8 @@ const updateScroll = () => {
 }
 
 onMounted(() => {
-  if (!textRef.value) return
-  textRef.value.addEventListener('keydown', handleKeyPress)
+  if (!textElementRef.value) return
+  textElementRef.value.addEventListener('keydown', handleKeyPress)
   updateScroll()
 })
 </script>

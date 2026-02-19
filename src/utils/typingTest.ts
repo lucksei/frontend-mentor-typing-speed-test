@@ -61,7 +61,22 @@ class TypingTest {
   }
 
   getAccuracy(): number {
-    return -1
+    const count = this.textArray.reduce<{ correct: number; incorrect: number }>(
+      (acc, word) => {
+        word.word.forEach((char) => {
+          if (char.status === 'correct') acc.correct += 1
+          if (char.status === 'incorrect') acc.incorrect += 1
+        })
+        return acc
+      },
+      { correct: 0, incorrect: 0 },
+    )
+    if (count.correct + count.incorrect === 0) return 0
+    return (count.correct / (count.correct + count.incorrect)) * 100
+  }
+
+  getStartTime(): number {
+    return this.startTime
   }
 
   setWordStatus() {
@@ -72,12 +87,10 @@ class TypingTest {
     } else {
       this.textArray[this.cursor.word_idx]!.status = 'correct'
     }
-    console.log(`word is ${incorrect ? 'incorrect' : 'correct'}`)
   }
 
   clearWordStatus() {
     this.textArray[this.cursor.word_idx]!.status = 'empty'
-    console.log('clearing word')
   }
 
   _cursorAdvance(status: 'correct' | 'incorrect'): number {
