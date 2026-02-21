@@ -58,6 +58,7 @@ const handleItemClick = (value: string) => {
         :value="option.value"
         :label="option.label"
         :key="option.value"
+        :selected="option.value === props.selectedOption"
         @click="handleItemClick"
       />
       <!-- <slot>
@@ -77,10 +78,10 @@ const handleItemClick = (value: string) => {
 .dropdown-content {
   position: absolute;
   width: 100%;
-  background-color: var(--colors-neutral-900);
+  background-color: var(--colors-neutral-800);
   top: calc(100% - 0.8rem);
   padding-top: 0.8rem;
-  border: 1px solid var(--colors-neutral-400);
+  border: none;
   border-radius: 0.5rem;
   z-index: 99;
 }
