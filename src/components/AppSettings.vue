@@ -56,6 +56,7 @@ const emit = defineEmits(['changeDifficulty', 'changeMode'])
   align-items: center;
   padding: 0 1.2rem 0 1.2rem;
   margin-bottom: 0.8rem; /* TODO delete */
+  z-index: 200;
 }
 .settings-container {
   display: flex;
@@ -64,5 +65,6 @@ const emit = defineEmits(['changeDifficulty', 'changeMode'])
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.8rem;
+  z-index: 200;
 }
 </style>

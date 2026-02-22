@@ -53,7 +53,6 @@ onUnmounted(() => {
       :time-mode="mode"
       @change-mode="mode = $event"
     />
-    <!-- <TestNotStartedModal /> -->
     <AppTypingTest @change="handleTypingTestChange" />
     <!-- <TestComplete /> -->
     <AppAttribution />

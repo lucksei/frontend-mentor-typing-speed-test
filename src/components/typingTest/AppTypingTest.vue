@@ -74,7 +74,7 @@ onMounted(() => {
       <button class="modal-start-button">Start Typing Test</button>
       <p class="modal-text">Or click the text and start typing</p>
     </div>
-    <div class="text-wrapper">
+    <div class="text-wrapper" tabindex="-1">
       <p class="text" tabindex="-1" ref="text-ref">
         <span
           class="word"
@@ -120,9 +120,9 @@ onMounted(() => {
   align-items: center;
   gap: 1rem;
   backdrop-filter: blur(0.2rem);
-  left: 0;
+  left: -10px;
   top: 0;
-  width: 100%;
+  width: calc(100% + 20px);
   height: 100%;
   z-index: 100;
 
@@ -132,6 +132,10 @@ onMounted(() => {
     background-color: var(--colors-blue-600);
     color: var(--colors-neutral-0);
     width: fit-content;
+  }
+
+  .modal-start-button:hover {
+    background-color: var(--colors-blue-400);
   }
 }
 
