@@ -19,7 +19,7 @@ class TypingTest {
   text: string = ''
   textArray: Word[] = []
   cursor: Cursor = { word_idx: 0, char_idx: 0 }
-  startTime: number = 0
+  startTime: number | null = null // Start time in milliseconds, null if not started
   constructor(text: string) {
     this.text = text
     this.resetTest()
@@ -42,10 +42,14 @@ class TypingTest {
     }))
   }
 
+  startTest() {
+    this.startTime = Date.now()
+  }
+
   resetTest() {
     this.textArray = this._textToWordlist(this.text)
     this.cursor = { word_idx: 0, char_idx: 0 }
-    this.startTime = Date.now()
+    this.startTime = null
 
     if (!this.textArray[0]) throw new Error('Text is empty')
     if (!this.textArray[0].word[0]) throw new Error('Text is empty')
@@ -53,6 +57,7 @@ class TypingTest {
   }
 
   getWpm(): number {
+    if (this.startTime === null) return 0
     const elapsedTime = Date.now() - this.startTime
     const words = this.textArray.reduce((sum, word) => {
       return word.status === 'correct' ? sum + 1 : sum
@@ -75,7 +80,7 @@ class TypingTest {
     return count.correct / (count.correct + count.incorrect)
   }
 
-  getStartTime(): number {
+  getStartTime(): number | null {
     return this.startTime
   }
 
@@ -160,6 +165,9 @@ class TypingTest {
 
   sendKeyStroke(key: string) {
     if (typeof this.cursor.char_idx !== 'number') return
+    if (this.cursor.char_idx === 0 && this.cursor.word_idx === 0) {
+      this.startTest()
+    }
     const current_char = this.textArray[this.cursor.word_idx]?.word[this.cursor.char_idx]
     if (!current_char) return
 

@@ -26,13 +26,17 @@ const mode = ref<string | undefined>(undefined)
 const handleTypingTestChange = () => {
   wpm.value = typingTest.value.getWpm()
   accuracy.value = typingTest.value.getAccuracy()
-  time.value = Date.now() - typingTest.value.getStartTime()
 }
-let timer: ReturnType<typeof setInterval>
 
+let timer: ReturnType<typeof setInterval>
 onMounted(() => {
   timer = setInterval(() => {
-    time.value = Date.now() - typingTest.value.getStartTime()
+    const startTime = typingTest.value.getStartTime()
+    if (startTime === null) {
+      time.value = 0
+      return
+    }
+    time.value = Date.now() - startTime
   }, 100)
 })
 
