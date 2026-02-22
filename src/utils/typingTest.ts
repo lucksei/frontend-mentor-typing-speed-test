@@ -20,6 +20,7 @@ class TypingTest {
   textArray: Word[] = []
   cursor: Cursor = { word_idx: 0, char_idx: 0 }
   startTime: number | null = null // Start time in milliseconds, null if not started
+  stopTime: number | null = null
   constructor(text: string) {
     this.text = text
     this.resetTest()
@@ -40,62 +41,6 @@ class TypingTest {
       word: this._wordToCharacterList(word),
       status: 'empty',
     }))
-  }
-
-  startTest() {
-    this.startTime = Date.now()
-  }
-
-  resetTest() {
-    this.textArray = this._textToWordlist(this.text)
-    this.cursor = { word_idx: 0, char_idx: 0 }
-    this.startTime = null
-
-    if (!this.textArray[0]) throw new Error('Text is empty')
-    if (!this.textArray[0].word[0]) throw new Error('Text is empty')
-    this.textArray[0].word[0].status = 'selected'
-  }
-
-  getWpm(): number {
-    if (this.startTime === null) return 0
-    const elapsedTime = Date.now() - this.startTime
-    const words = this.textArray.reduce((sum, word) => {
-      return word.status === 'correct' ? sum + 1 : sum
-    }, 0)
-    return words / (elapsedTime / (1000 * 60))
-  }
-
-  getAccuracy(): number {
-    const count = this.textArray.reduce<{ correct: number; incorrect: number }>(
-      (acc, word) => {
-        word.word.forEach((char) => {
-          if (char.status === 'correct') acc.correct += 1
-          if (char.status === 'incorrect') acc.incorrect += 1
-        })
-        return acc
-      },
-      { correct: 0, incorrect: 0 },
-    )
-    if (count.correct + count.incorrect === 0) return 0
-    return count.correct / (count.correct + count.incorrect)
-  }
-
-  getStartTime(): number | null {
-    return this.startTime
-  }
-
-  setWordStatus() {
-    const currentWord = this.textArray[this.cursor.word_idx]
-    const incorrect = currentWord?.word.some((char) => char.status === 'incorrect')
-    if (incorrect) {
-      this.textArray[this.cursor.word_idx]!.status = 'incorrect'
-    } else {
-      this.textArray[this.cursor.word_idx]!.status = 'correct'
-    }
-  }
-
-  clearWordStatus() {
-    this.textArray[this.cursor.word_idx]!.status = 'empty'
   }
 
   _cursorAdvance(status: 'correct' | 'incorrect'): number {
@@ -155,6 +100,20 @@ class TypingTest {
     return 0
   }
 
+  startTest() {
+    this.startTime = Date.now()
+  }
+
+  resetTest() {
+    this.textArray = this._textToWordlist(this.text)
+    this.cursor = { word_idx: 0, char_idx: 0 }
+    this.startTime = null
+
+    if (!this.textArray[0]) throw new Error('Text is empty')
+    if (!this.textArray[0].word[0]) throw new Error('Text is empty')
+    this.textArray[0].word[0].status = 'selected'
+  }
+
   getText(): Word[] {
     return this.textArray
   }
@@ -163,11 +122,69 @@ class TypingTest {
     return this.cursor
   }
 
+  getWpm(): number {
+    if (this.startTime === null) return 0
+    const words = this.textArray.reduce((sum, word) => {
+      return word.status === 'correct' ? sum + 1 : sum
+    }, 0)
+    if (this.stopTime !== null) {
+      const elapsedTime = this.stopTime - this.startTime
+      return words / (elapsedTime / (1000 * 60))
+    }
+    const elapsedTime = Date.now() - this.startTime
+    return words / (elapsedTime / (1000 * 60))
+  }
+
+  getAccuracy(): number {
+    const count = this.textArray.reduce<{ correct: number; incorrect: number }>(
+      (acc, word) => {
+        word.word.forEach((char) => {
+          if (char.status === 'correct') acc.correct += 1
+          if (char.status === 'incorrect') acc.incorrect += 1
+        })
+        return acc
+      },
+      { correct: 0, incorrect: 0 },
+    )
+    if (count.correct + count.incorrect === 0) return 0
+    return count.correct / (count.correct + count.incorrect)
+  }
+
+  getElapsedTime(): number | null {
+    if (this.startTime === null) return null
+    if (this.stopTime !== null) return this.stopTime - this.startTime
+    return Date.now() - this.startTime
+  }
+
+  getIsTestFinished(): boolean {
+    return this.cursor.word_idx === this.textArray.length - 1 && this.cursor.char_idx === 'end'
+  }
+
+  setWordStatus() {
+    const currentWord = this.textArray[this.cursor.word_idx]
+    const incorrect = currentWord?.word.some((char) => char.status === 'incorrect')
+    if (incorrect) {
+      this.textArray[this.cursor.word_idx]!.status = 'incorrect'
+    } else {
+      this.textArray[this.cursor.word_idx]!.status = 'correct'
+    }
+  }
+
+  clearWordStatus() {
+    this.textArray[this.cursor.word_idx]!.status = 'empty'
+  }
+
   sendKeyStroke(key: string) {
+    // If the test is finished return
+    if (this.stopTime !== null) return
+
     if (typeof this.cursor.char_idx !== 'number') return
+    // If the first word is typed start the test
     if (this.cursor.char_idx === 0 && this.cursor.word_idx === 0) {
       this.startTest()
     }
+
+    // Advance the cursor to the next character
     const current_char = this.textArray[this.cursor.word_idx]?.word[this.cursor.char_idx]
     if (!current_char) return
 
@@ -176,13 +193,25 @@ class TypingTest {
     } else {
       this._cursorAdvance('incorrect')
     }
+
+    // If the last word was typed, stop the test
+    // TODO: Fix linting error
+    if (this.cursor.word_idx === this.textArray.length - 1 && this.cursor.char_idx === 'end') {
+      this.stopTime = Date.now()
+    }
   }
 
   sendSpace() {
+    // If the test is finished return
+    if (this.stopTime !== null) return
+
     if (this.cursor.char_idx === 'end') this._cursorAdvanceWord()
   }
 
   sendBackspace() {
+    // If the test is finished return
+    if (this.stopTime !== null) return
+
     this._cursorBacktrack()
   }
 }

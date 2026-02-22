@@ -12,7 +12,8 @@ import { typingTestKey } from './utils/injectionKeys'
 
 const typingTest = ref(
   new TypingTest(
-    'Coffee culture has evolved dramatically in recent decades. What was once a simple morning ritual has become an art form, with baristas crafting intricate latte designs and roasters sourcing beans from remote mountain villages. The humble cup of coffee now tells a global story.',
+    // 'Coffee culture has evolved dramatically in recent decades. What was once a simple morning ritual has become an art form, with baristas crafting intricate latte designs and roasters sourcing beans from remote mountain villages. The humble cup of coffee now tells a global story.',
+    'Coffee culture has evolved dramatically...',
   ),
 )
 provide(typingTestKey, typingTest)
@@ -26,17 +27,18 @@ const mode = ref<string | undefined>(undefined)
 const handleTypingTestChange = () => {
   wpm.value = typingTest.value.getWpm()
   accuracy.value = typingTest.value.getAccuracy()
+  console.log(typingTest.value.getIsTestFinished())
 }
 
 let timer: ReturnType<typeof setInterval>
 onMounted(() => {
   timer = setInterval(() => {
-    const startTime = typingTest.value.getStartTime()
-    if (startTime === null) {
+    const elapsedTime = typingTest.value.getElapsedTime()
+    if (elapsedTime === null) {
       time.value = 0
       return
     }
-    time.value = Date.now() - startTime
+    time.value = elapsedTime
   }, 100)
 })
 
