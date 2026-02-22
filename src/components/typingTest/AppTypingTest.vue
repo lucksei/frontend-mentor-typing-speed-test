@@ -69,39 +69,81 @@ onMounted(() => {
 
 <template>
   <CustomDivider />
-  <div class="text-wrapper">
-    <p class="text" tabindex="-1" ref="text-ref">
-      <span
-        class="word"
-        :class="word.status"
-        v-for="word in textArray"
-        :key="word.id"
-        :data-id="word.id"
-      >
+  <div class="typing-test-container">
+    <div class="test-not-started-modal">
+      <button class="modal-start-button">Start Typing Test</button>
+      <p class="modal-text">Or click the text and start typing</p>
+    </div>
+    <div class="text-wrapper">
+      <p class="text" tabindex="-1" ref="text-ref">
         <span
-          class="char"
-          :class="char.status"
-          v-for="char in word.word"
-          :key="char.id"
-          :data-id="char.id"
+          class="word"
+          :class="word.status"
+          v-for="word in textArray"
+          :key="word.id"
+          :data-id="word.id"
         >
-          {{ char.char }}
+          <span
+            class="char"
+            :class="char.status"
+            v-for="char in word.word"
+            :key="char.id"
+            :data-id="char.id"
+          >
+            {{ char.char }}
+          </span>
         </span>
-      </span>
-    </p>
+      </p>
+    </div>
   </div>
   <CustomDivider />
   <AppTypingTestFooter @restart="handleRestart" />
 </template>
 
 <style scoped>
-.text-wrapper {
+.typing-test-container {
+  position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 0;
-  flex: 1;
-  overflow: hidden;
+  flex-grow: 1;
   margin: 1rem 0 1rem 0;
+}
+
+/* Modal */
+
+.test-not-started-modal {
+  position: absolute;
+  /* visibility: hidden; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  backdrop-filter: blur(0.2rem);
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+
+  .modal-start-button {
+    border: none;
+    padding: 0.6rem 1rem 0.6rem 1rem;
+    background-color: var(--colors-blue-600);
+    color: var(--colors-neutral-0);
+    width: fit-content;
+  }
+}
+
+/* Text */
+
+.text-wrapper {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  z-index: 99;
+  height: 100%;
+  overflow: scroll;
 }
 
 .text {
