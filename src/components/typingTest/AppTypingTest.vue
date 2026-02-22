@@ -1,19 +1,23 @@
 <script setup lang="ts">
-import { onMounted, useTemplateRef, shallowRef, inject } from 'vue'
+import { onMounted, ref, useTemplateRef, shallowRef, inject } from 'vue'
 import CustomDivider from '@/components/CustomDivider.vue'
+import AppTypingTestFooter from './AppTypingTestFooter.vue'
 import { typingTestKey } from '@/utils/injectionKeys'
 import { ignoredCharacters } from '@/utils/ignoredCharacters'
-import AppTypingTestFooter from './AppTypingTestFooter.vue'
 
 const emit = defineEmits(['change'])
 
+// Modal ref
+const modalHidden = ref(false)
+
+// Text element ref for scroll
+const textElementRef = useTemplateRef('text-ref')
+
+// Inject typing test & refs
 const typingTest = inject(typingTestKey)?.value
 if (!typingTest) throw new Error('TypingTest not provided')
-
 const textArray = shallowRef(typingTest.getText())
 const cursor = shallowRef(typingTest.getCursor())
-
-const textElementRef = useTemplateRef('text-ref')
 
 const handleKeyPress = (event: KeyboardEvent) => {
   event.preventDefault()
@@ -47,6 +51,13 @@ const handleRestart = (event: Event) => {
   updateScroll()
 }
 
+const handleModalClick = (event: Event) => {
+  event.preventDefault()
+  modalHidden.value = true
+
+  textElementRef.value?.focus()
+}
+
 const updateScroll = () => {
   cursor.value = typingTest.getCursor()
   if (!textElementRef.value) return
@@ -70,8 +81,12 @@ onMounted(() => {
 <template>
   <CustomDivider />
   <div class="typing-test-container">
-    <div class="test-not-started-modal">
-      <button class="modal-start-button">Start Typing Test</button>
+    <div
+      class="test-not-started-modal"
+      :class="modalHidden ? 'hidden' : ''"
+      @click="handleModalClick"
+    >
+      <button class="modal-start-button" @click="handleModalClick">Start Typing Test</button>
       <p class="modal-text">Or click the text and start typing</p>
     </div>
     <div class="text-wrapper" tabindex="-1">
