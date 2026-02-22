@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { onMounted, useTemplateRef, shallowRef, inject } from 'vue'
-import CustomDivider from './CustomDivider.vue'
-import IconRestart from './images/IconRestart.vue'
+import CustomDivider from '@/components/CustomDivider.vue'
 import { typingTestKey } from '@/utils/injectionKeys'
 import { ignoredCharacters } from '@/utils/ignoredCharacters'
+import AppTypingTestFooter from './AppTypingTestFooter.vue'
 
 const emit = defineEmits(['change'])
 
@@ -68,7 +68,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="typing-test-container">
+  <CustomDivider />
+  <div class="text-wrapper">
     <p class="text" tabindex="-1" ref="text-ref">
       <span
         class="word"
@@ -89,23 +90,18 @@ onMounted(() => {
       </span>
     </p>
   </div>
-  <div class="typing-test-footer">
-    <CustomDivider />
-    <button class="restart-btn" @click="handleRestart">
-      Restart Test
-      <IconRestart />
-    </button>
-  </div>
+  <CustomDivider />
+  <AppTypingTestFooter @restart="handleRestart" />
 </template>
 
 <style scoped>
-.typing-test-container {
+.text-wrapper {
   display: flex;
   flex-direction: column;
   min-height: 0;
   flex: 1;
   overflow: hidden;
-  padding: 1rem 0 1rem 0;
+  margin: 1rem 0 1rem 0;
 }
 
 .text {
@@ -143,29 +139,5 @@ onMounted(() => {
 
 .text:focus .char.selected {
   background-color: var(--colors-neutral-800);
-}
-
-.typing-test-footer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: start;
-  margin: 1rem 0 0 0;
-
-  .restart-btn {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    font-size: var(--font-size);
-    font-weight: var(--weight-semi-bold);
-    color: var(--colors-neutral-0);
-    background-color: var(--colors-neutral-800);
-    padding: 1rem 1.4rem 1rem 1.4rem;
-    margin: 1.8rem 0 1.8rem 0;
-    border: none;
-    cursor: pointer;
-  }
 }
 </style>

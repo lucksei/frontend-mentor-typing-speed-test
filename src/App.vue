@@ -3,8 +3,7 @@ import { onMounted, onUnmounted, provide, ref } from 'vue'
 import AppHeader from './components/AppHeader.vue'
 import AppSettings from './components/AppSettings.vue'
 import AppAttribution from './components/AppAttribution.vue'
-import CustomDivider from './components/CustomDivider.vue'
-import AppTypingTest from './components/AppTypingTest.vue'
+import AppTypingTest from './components/typingTest/AppTypingTest.vue'
 // import TestNotStartedModal from './components/TestNotStartedModal.vue'
 // import TestComplete from './components/TestComplete.vue'
 
@@ -28,7 +27,6 @@ const handleTypingTestChange = () => {
   wpm.value = typingTest.value.getWpm()
   accuracy.value = typingTest.value.getAccuracy()
   time.value = Date.now() - typingTest.value.getStartTime()
-  console.log(`change, wpm=${wpm.value}, accuracy=${accuracy.value}`)
 }
 let timer: ReturnType<typeof setInterval>
 
@@ -55,7 +53,6 @@ onUnmounted(() => {
       :time-mode="mode"
       @change-mode="mode = $event"
     />
-    <CustomDivider />
     <!-- <TestNotStartedModal /> -->
     <AppTypingTest @change="handleTypingTestChange" />
     <!-- <TestComplete /> -->
