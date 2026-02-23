@@ -4,11 +4,11 @@ import AppHeader from './components/AppHeader.vue'
 import AppSettings from './components/AppSettings.vue'
 import AppAttribution from './components/AppAttribution.vue'
 import AppTypingTest from './components/typingTest/AppTypingTest.vue'
-// import TestNotStartedModal from './components/TestNotStartedModal.vue'
 // import TestComplete from './components/TestComplete.vue'
 
 import TypingTest from './utils/typingTest'
 import { typingTestKey } from './utils/injectionKeys'
+import TestCompletedModal from './components/TestCompletedModal.vue'
 
 const typingTest = ref(
   new TypingTest(
@@ -50,6 +50,7 @@ onUnmounted(() => {
 <template>
   <div class="app">
     <AppHeader />
+    <TestCompletedModal :is-hidden="true" />
     <AppSettings
       :wpm="wpm"
       :accuracy="accuracy"

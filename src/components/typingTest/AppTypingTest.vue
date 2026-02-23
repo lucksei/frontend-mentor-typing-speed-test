@@ -54,7 +54,6 @@ const handleRestart = (event: Event) => {
 const handleModalClick = (event: Event) => {
   event.preventDefault()
   modalHidden.value = true
-
   textElementRef.value?.focus()
 }
 
@@ -107,6 +106,7 @@ onMounted(() => {
           >
             {{ char.char }}
           </span>
+          <span>&nbsp;</span>
         </span>
       </p>
     </div>
@@ -165,6 +165,10 @@ onMounted(() => {
   overflow: scroll;
 }
 
+.text-wrapper:focus {
+  outline: none;
+}
+
 .text {
   display: inline-flex;
   flex-direction: row;
@@ -174,10 +178,14 @@ onMounted(() => {
   min-height: 0;
 }
 
-.word::after {
+.text:focus {
+  outline: none;
+}
+
+/* .word::after {
   content: ' ';
   margin-left: 0.5rem;
-}
+} */
 
 .char.empty {
   color: var(--colors-neutral-500);
