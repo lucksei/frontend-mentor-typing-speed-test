@@ -50,7 +50,7 @@ onUnmounted(() => {
 <template>
   <div class="app">
     <AppHeader />
-    <TestCompletedModal :is-hidden="true" />
+    <TestCompletedModal :is-hidden="false" />
     <AppSettings
       :wpm="wpm"
       :accuracy="accuracy"

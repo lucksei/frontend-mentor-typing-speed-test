@@ -28,8 +28,11 @@ watchEffect(() => {
 <template>
   <div class="overlay">
     <div class="test-completed-modal" :class="`${fadeState} ${isHiddenClass ? 'hidden' : ''}`">
-      <p>Baseline Established!</p>
-      <p>You've set the bar. Now the real challenge begins-time to beat it.</p>
+      <h2>Baseline Established!</h2>
+      <p class="text-secondary">
+        You've set the bar. Now the real challenge begins-time to beat it.
+      </p>
+      <div class="stat-container"><span>WPM:</span><span>85</span></div>
     </div>
   </div>
 </template>
