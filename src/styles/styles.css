@@ -10,7 +10,7 @@ body {
 }
 
 .text-secondary {
-  color: var(--colors-neutral-500);
+  color: var(--colors-neutral-400);
 }
 
 img {
