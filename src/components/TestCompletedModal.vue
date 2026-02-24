@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watchEffect } from 'vue'
+import IconRestart from './images/IconRestart.vue'
 
 const props = defineProps<{
   isHidden?: boolean
@@ -32,7 +33,19 @@ watchEffect(() => {
       <p class="text-secondary">
         You've set the bar. Now the real challenge begins-time to beat it.
       </p>
-      <div class="stat-container"><span>WPM:</span><span>85</span></div>
+      <div class="stat-container">
+        <span>WPM:</span>
+        <span>85</span>
+      </div>
+      <div class="stat-container">
+        <span>Accuracy:</span>
+        <span>90%</span>
+      </div>
+      <div class="stat-container">
+        <span>Characters:</span>
+        <span>120/5</span>
+      </div>
+      <button class="restart-button">Beat This Score<IconRestart /></button>
     </div>
   </div>
 </template>

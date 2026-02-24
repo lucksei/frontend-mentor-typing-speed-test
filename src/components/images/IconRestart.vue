@@ -1,5 +1,5 @@
 <script setup lang="ts"></script>
 
 <template>
-  <img src="/src/assets/images/icon-restart.svg" alt="icon-restart" />
+  <img class="icon-image" src="/src/assets/images/icon-restart.svg" alt="icon-restart" />
 </template>
