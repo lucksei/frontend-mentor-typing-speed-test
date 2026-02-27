@@ -1,19 +1,18 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, provide, ref } from 'vue'
+import { onMounted, onUnmounted, provide, ref, useTemplateRef } from 'vue'
 import AppHeader from './components/AppHeader.vue'
 import AppSettings from './components/AppSettings.vue'
 import AppAttribution from './components/AppAttribution.vue'
-import AppTypingTest from './components/typingTest/AppTypingTest.vue'
-// import TestComplete from './components/TestComplete.vue'
+import AppTypingTest from '@/components/AppTypingTest/index.vue'
+import TestCompletedModal from './components/TestCompletedModal.vue'
 
 import TypingTest from './utils/typingTest'
 import { typingTestKey } from './utils/injectionKeys'
-import TestCompletedModal from './components/TestCompletedModal.vue'
 
 const typingTest = ref(
   new TypingTest(
     // 'Coffee culture has evolved dramatically in recent decades. What was once a simple morning ritual has become an art form, with baristas crafting intricate latte designs and roasters sourcing beans from remote mountain villages. The humble cup of coffee now tells a global story.',
-    'Coffee culture has evolved dramatically...',
+    'Coffee culture has evolved',
   ),
 )
 provide(typingTestKey, typingTest)
@@ -24,10 +23,21 @@ const time = ref(0)
 const difficulty = ref<string | undefined>(undefined)
 const mode = ref<string | undefined>(undefined)
 
+const appTypingTestRef = useTemplateRef<InstanceType<typeof AppTypingTest>>('app-typing-test-ref')
+const completeModalHidden = ref(true)
+
+const handleRestart = () => {
+  typingTest.value.resetTest()
+  appTypingTestRef.value?.handleRestart()
+  completeModalHidden.value = true
+}
+
 const handleTypingTestChange = () => {
   wpm.value = typingTest.value.getWpm()
   accuracy.value = typingTest.value.getAccuracy()
-  console.log(typingTest.value.getIsTestFinished())
+  if (typingTest.value.getIsTestFinished()) {
+    completeModalHidden.value = false
+  }
 }
 
 let timer: ReturnType<typeof setInterval>
@@ -50,7 +60,16 @@ onUnmounted(() => {
 <template>
   <div class="app">
     <AppHeader />
-    <TestCompletedModal :is-hidden="false" />
+    <TestCompletedModal
+      :is-hidden="completeModalHidden"
+      @restart="handleRestart"
+      :wpm="wpm"
+      :accuracy="accuracy"
+      :characters="{
+        correct: typingTest.getCorrectCharacters(),
+        incorrect: typingTest.getIncorrectCharacters(),
+      }"
+    />
     <AppSettings
       :wpm="wpm"
       :accuracy="accuracy"
@@ -60,7 +79,7 @@ onUnmounted(() => {
       :time-mode="mode"
       @change-mode="mode = $event"
     />
-    <AppTypingTest @change="handleTypingTestChange" />
+    <AppTypingTest @change="handleTypingTestChange" ref="app-typing-test-ref" />
     <!-- <TestComplete /> -->
     <AppAttribution />
   </div>

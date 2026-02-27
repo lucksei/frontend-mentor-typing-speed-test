@@ -16,7 +16,7 @@
   width: 3.1rem;
   height: 3.1rem;
   border-radius: 50%;
-  box-shadow: 0px 0px 0px 1rem hsla(140, 63%, 57%, 0.2);
+  box-shadow: 0px 0px 0px 1rem hsl(140 63% 57% / 0.2);
 }
 .shadow-2 {
   display: flex;
@@ -25,7 +25,7 @@
   width: 3rem;
   height: 3rem;
   border-radius: 50%;
-  box-shadow: 0px 0px 0px 0.6rem hsla(140, 63%, 57%, 0.2);
+  box-shadow: 0px 0px 0px 0.6rem hsla(140 63% 57% / 0.2);
 }
 img {
   width: 3.2rem;

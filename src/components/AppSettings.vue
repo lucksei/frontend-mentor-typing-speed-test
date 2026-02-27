@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import SettingsDropdown from './settingsDropdown/SettingsDropdown.vue'
+import SettingsDropdown from '@/components/SettingsDropdown/index.vue'
 import MetricsContainer from './MetricsContainer.vue'
 import CustomDivider from './CustomDivider.vue'
 

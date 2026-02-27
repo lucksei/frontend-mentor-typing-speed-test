@@ -42,9 +42,10 @@ const handleKeyPress = (event: KeyboardEvent) => {
   updateScroll()
 }
 
-const handleRestart = (event: Event) => {
-  event.preventDefault()
+const handleRestart = (event?: Event) => {
+  event?.preventDefault()
   typingTest.resetTest()
+  modalHidden.value = false
   textElementRef.value?.focus()
   textArray.value = [...typingTest.getText()]
   emit('change')
@@ -74,6 +75,10 @@ onMounted(() => {
   if (!textElementRef.value) return
   textElementRef.value.addEventListener('keydown', handleKeyPress)
   updateScroll()
+})
+
+defineExpose({
+  handleRestart,
 })
 </script>
 

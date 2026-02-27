@@ -13,6 +13,8 @@ const props = defineProps<{
 const fadeState = ref<'fade-in' | 'fade-out' | null>(null)
 const isHiddenClass = ref(true)
 
+const emit = defineEmits(['restart'])
+
 watchEffect(() => {
   if (props.isHidden) {
     fadeState.value = 'fade-out'
@@ -39,21 +41,23 @@ watchEffect(() => {
       </p>
       <div class="stat-container">
         <span class="stat-name text-secondary">WPM:</span>
-        <span class="stat-value">85</span>
+        <span class="stat-value">{{ `${Math.floor(props.wpm || 0)}` }}</span>
       </div>
       <div class="stat-container">
         <span class="stat-name text-secondary">Accuracy:</span>
-        <span class="stat-value red">90%</span>
+        <span class="stat-value red">{{ `${Math.floor((props.accuracy || 0) * 100)}%` }}</span>
       </div>
       <div class="stat-container">
         <span class="stat-name text-secondary">Characters:</span>
         <span class="stat-value">
-          <span class="green">120</span>
+          <span class="green">{{ characters?.correct }}</span>
           <span class="text-secondary">/</span>
-          <span class="red">5</span>
+          <span class="red">{{ characters?.incorrect }}</span>
         </span>
       </div>
-      <button class="restart-button">Beat This Score<IconRestart /></button>
+      <button class="restart-button" @click="emit('restart')">
+        Beat This Score<IconRestart />
+      </button>
     </div>
   </div>
 </template>
@@ -72,6 +76,7 @@ watchEffect(() => {
 
 .fade-in {
   animation: fade-in 1s ease-in-out;
+  animation-fill-mode: forwards;
 }
 
 @keyframes fade-out {
@@ -87,6 +92,7 @@ watchEffect(() => {
 
 .fade-out {
   animation: fade-out 1s ease-in-out;
+  animation-fill-mode: forwards;
 }
 
 .overlay {

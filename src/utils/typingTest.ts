@@ -150,6 +150,34 @@ class TypingTest {
     return count.correct / (count.correct + count.incorrect)
   }
 
+  getCorrectCharacters(): number {
+    const count = this.textArray.reduce<{ correct: number; incorrect: number }>(
+      (acc, word) => {
+        word.word.forEach((char) => {
+          if (char.status === 'correct') acc.correct += 1
+          if (char.status === 'incorrect') acc.incorrect += 1
+        })
+        return acc
+      },
+      { correct: 0, incorrect: 0 },
+    )
+    return count.correct
+  }
+
+  getIncorrectCharacters(): number {
+    const count = this.textArray.reduce<{ correct: number; incorrect: number }>(
+      (acc, word) => {
+        word.word.forEach((char) => {
+          if (char.status === 'correct') acc.correct += 1
+          if (char.status === 'incorrect') acc.incorrect += 1
+        })
+        return acc
+      },
+      { correct: 0, incorrect: 0 },
+    )
+    return count.incorrect
+  }
+
   getElapsedTime(): number | null {
     if (this.startTime === null) return null
     if (this.stopTime !== null) return this.stopTime - this.startTime
