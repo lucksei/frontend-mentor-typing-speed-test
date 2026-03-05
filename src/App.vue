@@ -12,7 +12,7 @@ import { typingTestKey } from './utils/injectionKeys'
 const typingTest = ref(
   new TypingTest(
     // 'Coffee culture has evolved dramatically in recent decades. What was once a simple morning ritual has become an art form, with baristas crafting intricate latte designs and roasters sourcing beans from remote mountain villages. The humble cup of coffee now tells a global story.',
-    'Coffee culture has evolved',
+    'a',
   ),
 )
 provide(typingTestKey, typingTest)
@@ -91,6 +91,6 @@ onUnmounted(() => {
   flex-direction: column;
   flex: 1;
   padding: 0 1rem 0 1rem;
-  height: 100vh;
+  height: 100dvh;
 }
 </style>

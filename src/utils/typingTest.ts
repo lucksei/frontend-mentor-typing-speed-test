@@ -108,6 +108,7 @@ class TypingTest {
     this.textArray = this._textToWordlist(this.text)
     this.cursor = { word_idx: 0, char_idx: 0 }
     this.startTime = null
+    this.stopTime = null
 
     if (!this.textArray[0]) throw new Error('Text is empty')
     if (!this.textArray[0].word[0]) throw new Error('Text is empty')

@@ -93,7 +93,7 @@ defineExpose({
       <button class="modal-start-button" @click="handleModalClick">Start Typing Test</button>
       <p class="modal-text">Or click the text and start typing</p>
     </div>
-    <div class="text-wrapper" tabindex="-1">
+    <div class="text-wrapper" tabindex="-1" @click="handleModalClick">
       <p class="text" tabindex="-1" ref="text-ref">
         <span
           class="word"
@@ -167,6 +167,7 @@ defineExpose({
   flex-direction: column;
   z-index: 99;
   height: 100%;
+  width: 100%;
   overflow: scroll;
 }
 

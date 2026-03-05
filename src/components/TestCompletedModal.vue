@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue'
+import { onMounted, onUnmounted, ref, useTemplateRef, watchEffect } from 'vue'
 import IconRestart from './images/IconRestart.vue'
 import IconCompleted from './images/IconCompleted.vue'
+import PatternStar1 from './images/PatternStar1.vue'
+import PatternStar2 from './images/PatternStar2.vue'
 
 const props = defineProps<{
   isHidden?: boolean
@@ -9,6 +11,8 @@ const props = defineProps<{
   accuracy?: number
   characters?: { correct: number; incorrect: number }
 }>()
+
+const overlayRef = useTemplateRef<HTMLDivElement>('overlay-ref')
 
 const fadeState = ref<'fade-in' | 'fade-out' | null>(null)
 const isHiddenClass = ref(true)
@@ -27,10 +31,30 @@ watchEffect(() => {
     isHiddenClass.value = false
   }
 })
+
+let resizeObserver: ResizeObserver | undefined
+
+onMounted(() => {
+  if (!overlayRef.value) return
+
+  resizeObserver = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      const overlayTop = entry.target.getBoundingClientRect().top
+      overlayRef.value?.style.setProperty('--overlay-top', `${overlayTop}px`)
+      console.log(overlayTop)
+    }
+  })
+
+  resizeObserver.observe(overlayRef.value)
+})
+
+onUnmounted(() => {
+  if (resizeObserver) resizeObserver.disconnect()
+})
 </script>
 
 <template>
-  <div class="overlay">
+  <div class="overlay" ref="overlay-ref">
     <div class="test-completed-modal" :class="`${fadeState} ${isHiddenClass ? 'hidden' : ''}`">
       <div class="icon">
         <IconCompleted />
@@ -58,6 +82,14 @@ watchEffect(() => {
       <button class="restart-button" @click="emit('restart')">
         Beat This Score<IconRestart />
       </button>
+      <div class="modal-background">
+        <div class="pattern-star-2">
+          <PatternStar2 />
+        </div>
+        <div class="pattern-star-1">
+          <PatternStar1 />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -108,7 +140,7 @@ watchEffect(() => {
   gap: 1rem;
   background-color: var(--colors-neutral-900);
   z-index: 300;
-  height: 100vh;
+  height: calc(100dvh - var(--overlay-top));
   left: -1rem;
   width: calc(100% + 2rem);
   padding: 1rem;
@@ -156,10 +188,12 @@ watchEffect(() => {
   }
 
   .restart-button {
-    padding: 0.8rem 1.1rem 0.8rem 1.1rem;
+    padding: 1rem 1.3rem 1rem 1.3rem;
     background-color: var(--colors-neutral-0);
     font-weight: var(--weight-bold);
     border: none;
+    margin-top: 1rem;
+    z-index: 1000;
 
     img {
       filter: invert();
@@ -168,6 +202,28 @@ watchEffect(() => {
 
   .restart-button:hover {
     box-shadow: inset 0 0 0 2px var(--colors-neutral-400);
+  }
+}
+
+.test-completed-modal .modal-background {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+
+  .pattern-star-1 {
+    align-self: flex-end;
+    margin: 2rem;
+  }
+
+  .pattern-star-2 {
+    align-self: flex-start;
+    margin: 2rem;
   }
 }
 </style>
