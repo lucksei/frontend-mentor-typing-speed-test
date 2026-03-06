@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, useTemplateRef, onMounted, onUnmounted, watchEffect, nextTick } from 'vue'
+import { ref, useTemplateRef, onMounted, onUnmounted } from 'vue'
 import IconRestart from './images/IconRestart.vue'
 import IconCompleted from './images/IconCompleted.vue'
 import PatternStar1 from './images/PatternStar1.vue'
