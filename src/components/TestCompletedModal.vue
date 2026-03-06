@@ -1,36 +1,45 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref, useTemplateRef, watchEffect } from 'vue'
+import { computed, onMounted, onUnmounted, ref, useTemplateRef, watchEffect } from 'vue'
 import IconRestart from './images/IconRestart.vue'
 import IconCompleted from './images/IconCompleted.vue'
 import PatternStar1 from './images/PatternStar1.vue'
 import PatternStar2 from './images/PatternStar2.vue'
 
-const props = defineProps<{
-  isHidden?: boolean
-  wpm?: number
-  accuracy?: number
-  characters?: { correct: number; incorrect: number }
-}>()
-
-const overlayRef = useTemplateRef<HTMLDivElement>('overlay-ref')
-
-const fadeState = ref<'fade-in' | 'fade-out' | null>(null)
-const isHiddenClass = ref(true)
+const props = withDefaults(
+  defineProps<{
+    isHidden?: boolean
+    wpm?: number
+    accuracy?: number
+    characters?: { correct: number; incorrect: number }
+  }>(),
+  {
+    isHidden: true,
+    wpm: 0,
+    accuracy: 0,
+    characters: () => ({ correct: 0, incorrect: 0 }),
+  },
+)
 
 const emit = defineEmits(['restart'])
 
-watchEffect(() => {
-  if (props.isHidden) {
-    fadeState.value = 'fade-out'
-    setTimeout(() => {
-      isHiddenClass.value = true
-    }, 1000)
-  }
-  if (!props.isHidden) {
-    fadeState.value = 'fade-in'
-    isHiddenClass.value = false
-  }
-})
+const overlayRef = useTemplateRef<HTMLDivElement>('overlay-ref')
+
+// const fadeState = ref<'fade-in' | 'fade-out' | null>(null)
+// const isHiddenClass = ref(true)
+const shouldShow = computed(() => !props.isHidden)
+
+// watchEffect(() => {
+//   if (props.isHidden) {
+//     fadeState.value = 'fade-out'
+//     setTimeout(() => {
+//       isHiddenClass.value = true
+//     }, 1000)
+//   }
+//   if (!props.isHidden) {
+//     fadeState.value = 'fade-in'
+//     isHiddenClass.value = false
+//   }
+// })
 
 let resizeObserver: ResizeObserver | undefined
 
@@ -41,7 +50,6 @@ onMounted(() => {
     for (const entry of entries) {
       const overlayTop = entry.target.getBoundingClientRect().top
       overlayRef.value?.style.setProperty('--overlay-top', `${overlayTop}px`)
-      console.log(overlayTop)
     }
   })
 
@@ -54,77 +62,72 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="overlay" ref="overlay-ref">
-    <div class="test-completed-modal" :class="`${fadeState} ${isHiddenClass ? 'hidden' : ''}`">
-      <div class="icon">
-        <IconCompleted />
-      </div>
-      <h2>Baseline Established!</h2>
-      <p class="text-secondary">
-        You've set the bar. Now the real challenge begins—time to beat it.
-      </p>
-      <div class="stat-container">
-        <span class="stat-name text-secondary">WPM:</span>
-        <span class="stat-value">{{ `${Math.floor(props.wpm || 0)}` }}</span>
-      </div>
-      <div class="stat-container">
-        <span class="stat-name text-secondary">Accuracy:</span>
-        <span class="stat-value red">{{ `${Math.floor((props.accuracy || 0) * 100)}%` }}</span>
-      </div>
-      <div class="stat-container">
-        <span class="stat-name text-secondary">Characters:</span>
-        <span class="stat-value">
-          <span class="green">{{ characters?.correct }}</span>
-          <span class="text-secondary">/</span>
-          <span class="red">{{ characters?.incorrect }}</span>
-        </span>
-      </div>
-      <button class="restart-button" @click="emit('restart')">
-        Beat This Score<IconRestart />
-      </button>
-      <div class="modal-background">
-        <div class="pattern-star-2">
-          <PatternStar2 />
+  <Transition name="modal" mode="out-in" style="z-index: 1000">
+    <div class="overlay" ref="overlay-ref" v-if="shouldShow">
+      <div class="test-completed-modal">
+        <div class="icon">
+          <IconCompleted />
         </div>
-        <div class="pattern-star-1">
-          <PatternStar1 />
+        <h2>Baseline Established!</h2>
+        <p class="text-secondary">
+          You've set the bar. Now the real challenge begins—time to beat it.
+        </p>
+        <div class="stat-container">
+          <span class="stat-name text-secondary">WPM:</span>
+          <span class="stat-value">{{ `${Math.floor(props.wpm)}` }}</span>
+        </div>
+        <div class="stat-container">
+          <span class="stat-name text-secondary">Accuracy:</span>
+          <span class="stat-value red">{{ `${Math.floor(props.accuracy * 100)}%` }}</span>
+        </div>
+        <div class="stat-container">
+          <span class="stat-name text-secondary">Characters:</span>
+          <span class="stat-value">
+            <span class="green">{{ characters?.correct }}</span>
+            <span class="text-secondary">/</span>
+            <span class="red">{{ characters?.incorrect }}</span>
+          </span>
+        </div>
+        <button class="restart-button" @click="emit('restart')">
+          Beat This Score<IconRestart />
+        </button>
+        <div class="modal-background">
+          <div class="pattern-star-2">
+            <PatternStar2 />
+          </div>
+          <div class="pattern-star-1">
+            <PatternStar1 />
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </Transition>
 </template>
 
 <style scoped>
-@keyframes fade-in {
-  0% {
-    opacity: 0;
-    transform: translateY(-50px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0px);
-  }
+.modal-enter-active,
+.modal-leave-active {
+  transition: all 1s ease-in-out;
 }
 
-.fade-in {
-  animation: fade-in 1s ease-in-out;
-  animation-fill-mode: forwards;
+.modal-enter-from {
+  opacity: 0;
+  transform: translateY(-50px);
 }
 
-@keyframes fade-out {
-  0% {
-    opacity: 1;
-    transform: translateY(0px);
-  }
-  100% {
-    opacity: 0;
-    transform: translateY(50px);
-  }
+.modal-enter-to {
+  opacity: 1;
+  transform: translateY(0px);
 }
 
-.fade-out {
-  animation: fade-out 1s ease-in-out;
-  animation-fill-mode: forwards;
+.modal-leave-from {
+  opacity: 1;
+  transform: translateY(0px);
+}
+
+.modal-leave-to {
+  opacity: 0;
+  transform: translateY(0px);
 }
 
 .overlay {
@@ -139,8 +142,9 @@ onUnmounted(() => {
   align-items: center;
   gap: 1rem;
   background-color: var(--colors-neutral-900);
-  z-index: 300;
-  height: calc(100dvh - var(--overlay-top));
+  background-color: red;
+  z-index: 100;
+  height: calc(100dvh);
   left: -1rem;
   width: calc(100% + 2rem);
   padding: 1rem;
@@ -193,7 +197,7 @@ onUnmounted(() => {
     font-weight: var(--weight-bold);
     border: none;
     margin-top: 1rem;
-    z-index: 1000;
+    z-index: 200;
 
     img {
       filter: invert();
