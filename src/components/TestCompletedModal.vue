@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref, useTemplateRef, onMounted, onUnmounted } from 'vue'
+import { ref, useTemplateRef, onMounted, onUnmounted, computed } from 'vue'
 import IconRestart from './images/IconRestart.vue'
 import IconCompleted from './images/IconCompleted.vue'
+import IconNewPb from './images/IconNewPb.vue'
 import PatternStar1 from './images/PatternStar1.vue'
 import PatternStar2 from './images/PatternStar2.vue'
+import AppConfetti from '@/components/AppConfetti.vue'
 
 const props = withDefaults(
   defineProps<{
@@ -11,17 +13,20 @@ const props = withDefaults(
     wpm?: number
     accuracy?: number
     characters?: { correct: number; incorrect: number }
+    resultType?: 'complete' | 'first' | 'new-pb'
   }>(),
   {
     isShown: false,
     wpm: 0,
     accuracy: 0,
     characters: () => ({ correct: 0, incorrect: 0 }),
+    resultType: 'complete',
   },
 )
 
 const emit = defineEmits(['restart'])
 
+// Resizing logic for the modal
 const overlayRef = useTemplateRef<HTMLDivElement>('overlay-ref')
 const overlayTop = ref(0)
 
@@ -40,6 +45,33 @@ onMounted(() => {
 onUnmounted(() => {
   if (resizeObserver) resizeObserver.disconnect()
 })
+
+// Modal result type logic
+const title = computed(() => {
+  switch (props.resultType) {
+    case 'complete':
+      return 'Test Completed'
+    case 'first':
+      return 'Baseline Established!'
+    case 'new-pb':
+      return 'High Score Smashed!'
+    default:
+      return 'Test Completed'
+  }
+})
+
+const subtitle = computed(() => {
+  switch (props.resultType) {
+    case 'complete':
+      return 'Solid run. Keep pushing to beat your high score.'
+    case 'first':
+      return "You've set the bar. Now the real challenge begins—time to beat it."
+    case 'new-pb':
+      return "You're getting faster. That was incredible typing"
+    default:
+      return ''
+  }
+})
 </script>
 
 <template>
@@ -51,11 +83,12 @@ onUnmounted(() => {
         :style="{ height: `calc(100dvh - ${overlayTop}px)` }"
       >
         <div class="icon">
-          <IconCompleted />
+          <IconCompleted v-if="props.resultType === 'complete' || props.resultType === 'first'" />
+          <IconNewPb v-if="props.resultType === 'new-pb'" />
         </div>
-        <h2>Baseline Established!</h2>
+        <h2>{{ title }}</h2>
         <p class="text-secondary">
-          You've set the bar. Now the real challenge begins—time to beat it.
+          {{ subtitle }}
         </p>
         <div class="stat-container">
           <span class="stat-name text-secondary">WPM:</span>
@@ -83,6 +116,7 @@ onUnmounted(() => {
           <div class="pattern-star-1">
             <PatternStar1 />
           </div>
+          <AppConfetti :show="true" />
         </div>
       </div>
     </Transition>

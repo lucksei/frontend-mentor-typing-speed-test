@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, provide, ref, useTemplateRef } from 'vue'
+import { computed, onMounted, onUnmounted, provide, ref, useTemplateRef } from 'vue'
 import AppHeader from './components/AppHeader.vue'
 import AppSettings from './components/AppSettings.vue'
 import AppAttribution from './components/AppAttribution.vue'
@@ -9,12 +9,11 @@ import TestCompletedModal from './components/TestCompletedModal.vue'
 import TypingTest from './utils/typingTest'
 import { typingTestKey } from './utils/injectionKeys'
 
-const typingTest = ref(
-  new TypingTest(
-    'Coffee culture has evolved dramatically in recent decades. What was once a simple morning ritual has become an art form, with baristas crafting intricate latte designs and roasters sourcing beans from remote mountain villages. The humble cup of coffee now tells a global story.',
-    // 'a',
-  ),
-)
+// const testText =
+//   'Coffee culture has evolved dramatically in recent decades. What was once a simple morning ritual has become an art form, with baristas crafting intricate latte designs and roasters sourcing beans from remote mountain villages. The humble cup of coffee now tells a global story.'
+const testText = 'a'
+
+const typingTest = computed(() => new TypingTest(testText))
 provide(typingTestKey, typingTest)
 
 const wpm = ref(0)
@@ -69,6 +68,7 @@ onUnmounted(() => {
         correct: typingTest.getCorrectCharacters(),
         incorrect: typingTest.getIncorrectCharacters(),
       }"
+      :result-type="`first`"
     />
     <AppSettings
       :wpm="wpm"
