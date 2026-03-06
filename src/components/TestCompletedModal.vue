@@ -30,7 +30,6 @@ let resizeObserver: ResizeObserver | undefined
 const updateOverlayTop = () => {
   if (!overlayRef.value) return
   overlayTop.value = Math.trunc(overlayRef.value.getBoundingClientRect().top)
-  console.log(overlayTop.value)
 }
 
 onMounted(() => {

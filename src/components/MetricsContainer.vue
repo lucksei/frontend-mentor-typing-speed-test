@@ -1,32 +1,34 @@
 <script setup lang="ts">
-import { ref, watchEffect } from 'vue'
+import { computed } from 'vue'
 
 const props = defineProps<{
   type: 'wpm' | 'accuracy' | 'time'
   value: number
 }>()
 
-const displayValue = ref('')
-
-switch (props.type) {
-  case 'wpm':
-    watchEffect(() => (displayValue.value = `${Math.floor(props.value)}`))
-    break
-  case 'accuracy':
-    watchEffect(() => (displayValue.value = `${Math.floor(props.value * 100)}%`))
-    break
-  case 'time':
-    watchEffect(() => (displayValue.value = `${new Date(props.value).toISOString().slice(14, 19)}`))
-    break
-}
+const displayValue = computed(() => {
+  switch (props.type) {
+    case 'wpm':
+      return `${Math.floor(props.value)}`
+    case 'accuracy':
+      return `${Math.floor(props.value * 100)}`
+    case 'time':
+      return `${new Date(props.value).toISOString().slice(14, 19)}`
+    default:
+      return ''
+  }
+})
 </script>
 
 <template>
   <div class="metric-container">
-    <div class="text-secondary">{{ `${type[0]?.toUpperCase()}${type.slice(1)}:` }}</div>
+    <div class="text-secondary">{{ `${props.type[0]?.toUpperCase()}${type.slice(1)}:` }}</div>
     <div
       class="metric"
-      :class="props.type === 'accuracy' ? 'red' : props.type === 'time' ? 'yellow' : null"
+      :class="{
+        red: props.type === 'accuracy',
+        yellow: props.type === 'time',
+      }"
     >
       {{ displayValue }}
     </div>
@@ -38,7 +40,7 @@ switch (props.type) {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 0.5rem 0 0.5rem;
+  padding: 0 0.5rem;
 }
 
 .metric {

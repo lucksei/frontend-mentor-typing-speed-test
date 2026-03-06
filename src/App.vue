@@ -11,8 +11,8 @@ import { typingTestKey } from './utils/injectionKeys'
 
 const typingTest = ref(
   new TypingTest(
-    // 'Coffee culture has evolved dramatically in recent decades. What was once a simple morning ritual has become an art form, with baristas crafting intricate latte designs and roasters sourcing beans from remote mountain villages. The humble cup of coffee now tells a global story.',
-    'a',
+    'Coffee culture has evolved dramatically in recent decades. What was once a simple morning ritual has become an art form, with baristas crafting intricate latte designs and roasters sourcing beans from remote mountain villages. The humble cup of coffee now tells a global story.',
+    // 'a',
   ),
 )
 provide(typingTestKey, typingTest)
@@ -20,8 +20,8 @@ provide(typingTestKey, typingTest)
 const wpm = ref(0)
 const accuracy = ref(0)
 const time = ref(0)
-const difficulty = ref<string | undefined>(undefined)
-const mode = ref<string | undefined>(undefined)
+const difficulty = ref<'easy' | 'medium' | 'hard' | undefined>(undefined)
+const mode = ref<'timed' | 'passage' | undefined>(undefined)
 
 const appTypingTestRef = useTemplateRef<InstanceType<typeof AppTypingTest>>('app-typing-test-ref')
 const completeModalShown = ref(false)
