@@ -24,19 +24,19 @@ const difficulty = ref<string | undefined>(undefined)
 const mode = ref<string | undefined>(undefined)
 
 const appTypingTestRef = useTemplateRef<InstanceType<typeof AppTypingTest>>('app-typing-test-ref')
-const completeModalHidden = ref(true)
+const completeModalShown = ref(false)
 
 const handleRestart = () => {
   typingTest.value.resetTest()
   appTypingTestRef.value?.handleRestart()
-  completeModalHidden.value = true
+  completeModalShown.value = false
 }
 
 const handleTypingTestChange = () => {
   wpm.value = typingTest.value.getWpm()
   accuracy.value = typingTest.value.getAccuracy()
   if (typingTest.value.getIsTestFinished()) {
-    completeModalHidden.value = false
+    completeModalShown.value = true
   }
 }
 
@@ -61,7 +61,7 @@ onUnmounted(() => {
   <div class="app">
     <AppHeader />
     <TestCompletedModal
-      :is-hidden="completeModalHidden"
+      :is-shown="completeModalShown"
       @restart="handleRestart"
       :wpm="wpm"
       :accuracy="accuracy"

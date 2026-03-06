@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, useTemplateRef, watchEffect } from 'vue'
+import { ref, useTemplateRef, onMounted, onUnmounted, watchEffect, nextTick } from 'vue'
 import IconRestart from './images/IconRestart.vue'
 import IconCompleted from './images/IconCompleted.vue'
 import PatternStar1 from './images/PatternStar1.vue'
@@ -7,13 +7,13 @@ import PatternStar2 from './images/PatternStar2.vue'
 
 const props = withDefaults(
   defineProps<{
-    isHidden?: boolean
+    isShown?: boolean
     wpm?: number
     accuracy?: number
     characters?: { correct: number; incorrect: number }
   }>(),
   {
-    isHidden: true,
+    isShown: false,
     wpm: 0,
     accuracy: 0,
     characters: () => ({ correct: 0, incorrect: 0 }),
@@ -23,37 +23,19 @@ const props = withDefaults(
 const emit = defineEmits(['restart'])
 
 const overlayRef = useTemplateRef<HTMLDivElement>('overlay-ref')
-
-// const fadeState = ref<'fade-in' | 'fade-out' | null>(null)
-// const isHiddenClass = ref(true)
-const shouldShow = computed(() => !props.isHidden)
-
-// watchEffect(() => {
-//   if (props.isHidden) {
-//     fadeState.value = 'fade-out'
-//     setTimeout(() => {
-//       isHiddenClass.value = true
-//     }, 1000)
-//   }
-//   if (!props.isHidden) {
-//     fadeState.value = 'fade-in'
-//     isHiddenClass.value = false
-//   }
-// })
+const overlayTop = ref(0)
 
 let resizeObserver: ResizeObserver | undefined
 
-onMounted(() => {
+const updateOverlayTop = () => {
   if (!overlayRef.value) return
+  overlayTop.value = Math.trunc(overlayRef.value.getBoundingClientRect().top)
+  console.log(overlayTop.value)
+}
 
-  resizeObserver = new ResizeObserver((entries) => {
-    for (const entry of entries) {
-      const overlayTop = entry.target.getBoundingClientRect().top
-      overlayRef.value?.style.setProperty('--overlay-top', `${overlayTop}px`)
-    }
-  })
-
-  resizeObserver.observe(overlayRef.value)
+onMounted(() => {
+  resizeObserver = new ResizeObserver(updateOverlayTop)
+  resizeObserver.observe(document.body)
 })
 
 onUnmounted(() => {
@@ -62,9 +44,13 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <Transition name="modal" mode="out-in" style="z-index: 1000">
-    <div class="overlay" ref="overlay-ref" v-if="shouldShow">
-      <div class="test-completed-modal">
+  <div class="overlay" ref="overlay-ref">
+    <Transition name="modal" mode="out-in" style="z-index: 1000">
+      <div
+        class="test-completed-modal"
+        v-if="props.isShown"
+        :style="{ height: `calc(100dvh - ${overlayTop}px)` }"
+      >
         <div class="icon">
           <IconCompleted />
         </div>
@@ -100,8 +86,8 @@ onUnmounted(() => {
           </div>
         </div>
       </div>
-    </div>
-  </Transition>
+    </Transition>
+  </div>
 </template>
 
 <style scoped>
@@ -144,7 +130,6 @@ onUnmounted(() => {
   background-color: var(--colors-neutral-900);
   background-color: red;
   z-index: 100;
-  height: calc(100dvh);
   left: -1rem;
   width: calc(100% + 2rem);
   padding: 1rem;
