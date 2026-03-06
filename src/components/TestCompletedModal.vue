@@ -128,7 +128,6 @@ onUnmounted(() => {
   align-items: center;
   gap: 1rem;
   background-color: var(--colors-neutral-900);
-  background-color: red;
   z-index: 100;
   left: -1rem;
   width: calc(100% + 2rem);
