@@ -60,7 +60,7 @@ onUnmounted(() => {
   <div class="app">
     <AppHeader />
     <TestCompletedModal
-      :is-shown="completeModalShown"
+      :show="completeModalShown"
       @restart="handleRestart"
       :wpm="wpm"
       :accuracy="accuracy"
@@ -68,7 +68,7 @@ onUnmounted(() => {
         correct: typingTest.getCorrectCharacters(),
         incorrect: typingTest.getIncorrectCharacters(),
       }"
-      :result-type="`first`"
+      result-type="first"
     />
     <AppSettings
       :wpm="wpm"

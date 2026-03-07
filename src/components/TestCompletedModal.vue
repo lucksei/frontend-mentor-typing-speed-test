@@ -9,14 +9,14 @@ import AppConfetti from '@/components/AppConfetti.vue'
 
 const props = withDefaults(
   defineProps<{
-    isShown?: boolean
+    show?: boolean
     wpm?: number
     accuracy?: number
     characters?: { correct: number; incorrect: number }
     resultType?: 'complete' | 'first' | 'new-pb'
   }>(),
   {
-    isShown: false,
+    show: false,
     wpm: 0,
     accuracy: 0,
     characters: () => ({ correct: 0, incorrect: 0 }),
@@ -72,6 +72,19 @@ const subtitle = computed(() => {
       return ''
   }
 })
+
+const restartButton = computed(() => {
+  switch (props.resultType) {
+    case 'complete':
+      return 'Go Again'
+    case 'first':
+      return 'Beat This Score'
+    case 'new-pb':
+      return 'Go Again'
+    default:
+      return 'Go Again'
+  }
+})
 </script>
 
 <template>
@@ -79,7 +92,7 @@ const subtitle = computed(() => {
     <Transition name="modal" mode="out-in" style="z-index: 1000">
       <div
         class="test-completed-modal"
-        v-if="props.isShown"
+        v-if="props.show"
         :style="{ height: `calc(100dvh - ${overlayTop}px)` }"
       >
         <div class="icon">
@@ -107,16 +120,20 @@ const subtitle = computed(() => {
           </span>
         </div>
         <button class="restart-button" @click="emit('restart')">
-          Beat This Score<IconRestart />
+          {{ restartButton }}<IconRestart />
         </button>
-        <div class="modal-background">
-          <div class="pattern-star-2">
-            <PatternStar2 />
+        <div class="modal-background-overlay">
+          <div class="modal-background">
+            <div class="pattern-star-2" v-if="props.resultType !== 'new-pb'">
+              <PatternStar2 />
+            </div>
+            <div class="pattern-star-1" v-if="props.resultType !== 'new-pb'">
+              <PatternStar1 />
+            </div>
+            <div class="pattern-confetti" v-if="props.resultType === 'new-pb'">
+              <AppConfetti v-if="props.show" />
+            </div>
           </div>
-          <div class="pattern-star-1">
-            <PatternStar1 />
-          </div>
-          <AppConfetti :show="true" />
         </div>
       </div>
     </Transition>
@@ -213,7 +230,8 @@ const subtitle = computed(() => {
     background-color: var(--colors-neutral-0);
     font-weight: var(--weight-bold);
     border: none;
-    margin-top: 1rem;
+    margin-top: 2rem;
+    font-size: var(--font-size-medium);
     z-index: 200;
 
     img {
@@ -226,25 +244,38 @@ const subtitle = computed(() => {
   }
 }
 
-.test-completed-modal .modal-background {
+.modal-background-overlay {
   position: absolute;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  z-index: 0;
   width: 100%;
   height: 100%;
   top: 0;
   left: 0;
+  z-index: 0;
 
-  .pattern-star-1 {
-    align-self: flex-end;
-    margin: 2rem;
-  }
+  .modal-background {
+    position: relative;
+    width: 100%;
+    height: 100%;
 
-  .pattern-star-2 {
-    align-self: flex-start;
-    margin: 2rem;
+    .pattern-star-1 {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      margin: 2rem;
+    }
+
+    .pattern-star-2 {
+      position: absolute;
+      top: 0;
+      left: 0;
+      margin: 2rem;
+    }
+
+    .pattern-confetti {
+      position: absolute;
+      bottom: 0;
+      left: -2rem;
+    }
   }
 }
 </style>
