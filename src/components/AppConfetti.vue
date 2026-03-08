@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import PatternConfetti from './images/PatternConfetti.vue'
 
-const props = withDefaults(
+withDefaults(
   defineProps<{
     show?: boolean
   }>(),
@@ -13,8 +13,8 @@ const props = withDefaults(
 
 <template>
   <div class="overlay">
-    <Transition name="confetti" mode="in-out" appear>
-      <div class="pattern-confetti" v-if="props.show">
+    <Transition name="confetti" appear>
+      <div class="pattern-confetti" v-if="show">
         <PatternConfetti />
       </div>
     </Transition>

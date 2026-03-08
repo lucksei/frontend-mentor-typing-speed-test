@@ -230,8 +230,7 @@ const restartButton = computed(() => {
     background-color: var(--colors-neutral-0);
     font-weight: var(--weight-bold);
     border: none;
-    margin-top: 2rem;
-    font-size: var(--font-size-medium);
+    margin-top: 1rem;
     z-index: 200;
 
     img {

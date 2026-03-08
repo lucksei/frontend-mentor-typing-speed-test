@@ -8,19 +8,23 @@ import TestCompletedModal from './components/TestCompletedModal.vue'
 
 import TypingTest from './utils/typingTest'
 import { typingTestKey } from './utils/injectionKeys'
+import { getRandomText } from './utils/textData'
 
-// const testText =
-//   'Coffee culture has evolved dramatically in recent decades. What was once a simple morning ritual has become an art form, with baristas crafting intricate latte designs and roasters sourcing beans from remote mountain villages. The humble cup of coffee now tells a global story.'
-const testText = 'a'
-
-const typingTest = computed(() => new TypingTest(testText))
-provide(typingTestKey, typingTest)
-
+// Settings & Stats
 const wpm = ref(0)
 const accuracy = ref(0)
 const time = ref(0)
-const difficulty = ref<'easy' | 'medium' | 'hard' | undefined>(undefined)
-const mode = ref<'timed' | 'passage' | undefined>(undefined)
+const difficulty = ref<'easy' | 'medium' | 'hard' | undefined>('easy')
+const mode = ref<'timed' | 'passage' | undefined>('timed')
+
+// Typing Test
+const testText = computed(() => {
+  if (!difficulty.value) return { id: 'error', text: 'a' }
+  console.log('here')
+  return getRandomText(difficulty.value)
+})
+const typingTest = computed(() => new TypingTest(testText.value.text))
+provide(typingTestKey, typingTest)
 
 const appTypingTestRef = useTemplateRef<InstanceType<typeof AppTypingTest>>('app-typing-test-ref')
 const completeModalShown = ref(false)
@@ -80,7 +84,6 @@ onUnmounted(() => {
       @change-mode="mode = $event"
     />
     <AppTypingTest @change="handleTypingTestChange" ref="app-typing-test-ref" />
-    <!-- <TestComplete /> -->
     <AppAttribution />
   </div>
 </template>
