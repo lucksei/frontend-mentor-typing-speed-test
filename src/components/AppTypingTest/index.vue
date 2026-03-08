@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { onMounted, ref, useTemplateRef, shallowRef, inject } from 'vue'
+import { onMounted, ref, useTemplateRef, inject, reactive, computed } from 'vue'
 import CustomDivider from '@/components/CustomDivider.vue'
 import AppTypingTestFooter from './AppTypingTestFooter.vue'
 import { typingTestKey } from '@/utils/injectionKeys'
 import { ignoredCharacters } from '@/utils/ignoredCharacters'
 
-const emit = defineEmits(['change'])
+const emit = defineEmits(['change', 'restart'])
 
 // Modal ref
 const modalHidden = ref(false)
@@ -13,42 +13,39 @@ const modalHidden = ref(false)
 // Text element ref for scroll
 const textElementRef = useTemplateRef('text-ref')
 
+const typingTestProvider = inject(typingTestKey)
+if (!typingTestProvider) throw new Error('TypingTest not provided')
+
 // Inject typing test & refs
-const typingTest = inject(typingTestKey)?.value
-if (!typingTest) throw new Error('TypingTest not provided')
-const textArray = shallowRef(typingTest.getText())
-const cursor = shallowRef(typingTest.getCursor())
+const typingTest = reactive(typingTestProvider.value)
+const textArray = computed(() => typingTest.getText())
+const cursor = computed(() => typingTest.getCursor())
 
 const handleKeyPress = (event: KeyboardEvent) => {
   event.preventDefault()
   if (ignoredCharacters.includes(event.key)) return
   if (event.key === 'Backspace') {
     typingTest.sendBackspace()
-    textArray.value = [...typingTest.getText()]
     emit('change')
     updateScroll()
     return
   }
   if (event.key === ' ') {
     typingTest.sendSpace()
-    textArray.value = [...typingTest.getText()]
     emit('change')
     updateScroll()
     return
   }
   typingTest.sendKeyStroke(event.key)
-  textArray.value = [...typingTest.getText()]
   emit('change')
   updateScroll()
 }
 
 const handleRestart = (event?: Event) => {
   event?.preventDefault()
-  typingTest.resetTest()
   modalHidden.value = false
   textElementRef.value?.focus()
-  textArray.value = [...typingTest.getText()]
-  emit('change')
+  emit('restart')
   updateScroll()
 }
 
@@ -59,7 +56,6 @@ const handleModalClick = (event: Event) => {
 }
 
 const updateScroll = () => {
-  cursor.value = typingTest.getCursor()
   if (!textElementRef.value) return
   const currentWord = textElementRef.value.querySelector(`[data-id="${cursor.value.word_idx}"]`)
   if (!currentWord) return

@@ -16,14 +16,12 @@ type Cursor = {
 }
 
 class TypingTest {
-  text: string = ''
   textArray: Word[] = []
   cursor: Cursor = { word_idx: 0, char_idx: 0 }
   startTime: number | null = null // Start time in milliseconds, null if not started
   stopTime: number | null = null
-  constructor(text: string) {
-    this.text = text
-    this.resetTest()
+  constructor(newText: string) {
+    this.resetTest(newText)
   }
 
   _wordToCharacterList(word: string): Character[] {
@@ -104,8 +102,8 @@ class TypingTest {
     this.startTime = Date.now()
   }
 
-  resetTest() {
-    this.textArray = this._textToWordlist(this.text)
+  resetTest(newText: string) {
+    this.textArray = this._textToWordlist(newText)
     this.cursor = { word_idx: 0, char_idx: 0 }
     this.startTime = null
     this.stopTime = null

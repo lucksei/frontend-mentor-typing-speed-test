@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, provide, ref, useTemplateRef } from 'vue'
+import { onMounted, onUnmounted, provide, ref, useTemplateRef, watchEffect } from 'vue'
 import AppHeader from './components/AppHeader.vue'
 import AppSettings from './components/AppSettings.vue'
 import AppAttribution from './components/AppAttribution.vue'
@@ -17,21 +17,31 @@ const time = ref(0)
 const difficulty = ref<'easy' | 'medium' | 'hard' | undefined>('easy')
 const mode = ref<'timed' | 'passage' | undefined>('timed')
 
-// Typing Test
-const testText = computed(() => {
-  if (!difficulty.value) return { id: 'error', text: 'a' }
-  console.log('here')
-  return getRandomText(difficulty.value)
-})
-const typingTest = computed(() => new TypingTest(testText.value.text))
-provide(typingTestKey, typingTest)
-
-const appTypingTestRef = useTemplateRef<InstanceType<typeof AppTypingTest>>('app-typing-test-ref')
+// Modal
 const completeModalShown = ref(false)
 
+// Typing Test
+const testText = ref({ id: 'sample', text: 'Sample' }) // TODO: fix error when text is empty in typingTest.ts
+const typingTest = ref(new TypingTest(testText.value.text))
+
+const initializeTest = () => {
+  if (!difficulty.value) return
+  testText.value = getRandomText(difficulty.value)
+  typingTest.value.resetTest(testText.value.text)
+}
+
+onMounted(() => {
+  initializeTest()
+})
+
+// watchEffect(() => {
+//   initializeTest()
+// })
+
+provide(typingTestKey, typingTest)
+
 const handleRestart = () => {
-  typingTest.value.resetTest()
-  appTypingTestRef.value?.handleRestart()
+  initializeTest()
   completeModalShown.value = false
 }
 
@@ -41,6 +51,15 @@ const handleTypingTestChange = () => {
   if (typingTest.value.getIsTestFinished()) {
     completeModalShown.value = true
   }
+}
+
+const handleDifficultyChange = (newDifficulty: 'easy' | 'medium' | 'hard') => {
+  difficulty.value = newDifficulty
+  initializeTest()
+}
+
+const handleModeChange = (newMode: 'timed' | 'passage') => {
+  mode.value = newMode
 }
 
 let timer: ReturnType<typeof setInterval>
@@ -79,11 +98,15 @@ onUnmounted(() => {
       :accuracy="accuracy"
       :time="time"
       :difficulty="difficulty"
-      @change-difficulty="difficulty = $event"
+      @change-difficulty="handleDifficultyChange"
       :time-mode="mode"
-      @change-mode="mode = $event"
+      @change-mode="handleModeChange"
     />
-    <AppTypingTest @change="handleTypingTestChange" ref="app-typing-test-ref" />
+    <AppTypingTest
+      @change="handleTypingTestChange"
+      @restart="handleRestart"
+      ref="app-typing-test-ref"
+    />
     <AppAttribution />
   </div>
 </template>
