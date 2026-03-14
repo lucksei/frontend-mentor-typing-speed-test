@@ -1,14 +1,20 @@
 <script setup lang="ts">
-import { onMounted, ref, useTemplateRef, inject, reactive, computed } from 'vue'
+import { onMounted, useTemplateRef, inject, reactive, computed } from 'vue'
 import CustomDivider from '@/components/CustomDivider.vue'
 import AppTypingTestFooter from './AppTypingTestFooter.vue'
 import { typingTestKey } from '@/utils/injectionKeys'
 import { ignoredCharacters } from '@/utils/ignoredCharacters'
 
-const emit = defineEmits(['change', 'restart'])
+withDefaults(
+  defineProps<{
+    modalOpen: boolean
+  }>(),
+  {
+    modalOpen: true,
+  },
+)
 
-// Modal ref
-const modalHidden = ref(false)
+const emit = defineEmits(['change', 'restart', 'start'])
 
 // Text element ref for scroll
 const textElementRef = useTemplateRef('text-ref')
@@ -43,15 +49,13 @@ const handleKeyPress = (event: KeyboardEvent) => {
 
 const handleRestart = (event?: Event) => {
   event?.preventDefault()
-  modalHidden.value = false
-  textElementRef.value?.focus()
   emit('restart')
   updateScroll()
 }
 
 const handleModalClick = (event: Event) => {
   event.preventDefault()
-  modalHidden.value = true
+  emit('start')
   textElementRef.value?.focus()
 }
 
@@ -72,10 +76,6 @@ onMounted(() => {
   textElementRef.value.addEventListener('keydown', handleKeyPress)
   updateScroll()
 })
-
-defineExpose({
-  handleRestart,
-})
 </script>
 
 <template>
@@ -83,7 +83,7 @@ defineExpose({
   <div class="typing-test-container">
     <div
       class="test-not-started-modal"
-      :class="modalHidden ? 'hidden' : ''"
+      :class="modalOpen ? '' : 'hidden'"
       @click="handleModalClick"
     >
       <button class="modal-start-button" @click="handleModalClick">Start Typing Test</button>
@@ -183,11 +183,6 @@ defineExpose({
 .text:focus {
   outline: none;
 }
-
-/* .word::after {
-  content: ' ';
-  margin-left: 0.5rem;
-} */
 
 .char.empty {
   color: var(--colors-neutral-500);

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, provide, ref, useTemplateRef, watchEffect } from 'vue'
+import { onMounted, onUnmounted, provide, ref } from 'vue'
 import AppHeader from './components/AppHeader.vue'
 import AppSettings from './components/AppSettings.vue'
 import AppAttribution from './components/AppAttribution.vue'
@@ -17,8 +17,9 @@ const time = ref(0)
 const difficulty = ref<'easy' | 'medium' | 'hard' | undefined>('easy')
 const mode = ref<'timed' | 'passage' | undefined>('timed')
 
-// Modal
-const completeModalShown = ref(false)
+// Modals
+const completeModalShow = ref(false)
+const startModalShow = ref(true)
 
 // Typing Test
 const testText = ref({ id: 'sample', text: 'Sample' }) // TODO: fix error when text is empty in typingTest.ts
@@ -34,32 +35,36 @@ onMounted(() => {
   initializeTest()
 })
 
-// watchEffect(() => {
-//   initializeTest()
-// })
-
 provide(typingTestKey, typingTest)
 
 const handleRestart = () => {
   initializeTest()
-  completeModalShown.value = false
+  startModalShow.value = true
+  completeModalShow.value = false
+}
+
+const handleStart = () => {
+  startModalShow.value = false
 }
 
 const handleTypingTestChange = () => {
   wpm.value = typingTest.value.getWpm()
   accuracy.value = typingTest.value.getAccuracy()
   if (typingTest.value.getIsTestFinished()) {
-    completeModalShown.value = true
+    completeModalShow.value = true
   }
 }
 
 const handleDifficultyChange = (newDifficulty: 'easy' | 'medium' | 'hard') => {
+  if (difficulty.value === newDifficulty) return
   difficulty.value = newDifficulty
-  initializeTest()
+  handleRestart()
 }
 
 const handleModeChange = (newMode: 'timed' | 'passage') => {
+  if (mode.value === newMode) return
   mode.value = newMode
+  handleRestart()
 }
 
 let timer: ReturnType<typeof setInterval>
@@ -83,7 +88,7 @@ onUnmounted(() => {
   <div class="app">
     <AppHeader />
     <TestCompletedModal
-      :show="completeModalShown"
+      :show="completeModalShow"
       @restart="handleRestart"
       :wpm="wpm"
       :accuracy="accuracy"
@@ -103,9 +108,10 @@ onUnmounted(() => {
       @change-mode="handleModeChange"
     />
     <AppTypingTest
+      :modal-open="startModalShow"
       @change="handleTypingTestChange"
       @restart="handleRestart"
-      ref="app-typing-test-ref"
+      @start="handleStart"
     />
     <AppAttribution />
   </div>
