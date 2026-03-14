@@ -2,6 +2,7 @@
 import { onMounted, useTemplateRef, inject, reactive, computed } from 'vue'
 import CustomDivider from '@/components/CustomDivider.vue'
 import AppTypingTestFooter from './AppTypingTestFooter.vue'
+import AppTypingTestStartModal from './AppTypingTestStartModal.vue'
 import { typingTestKey } from '@/utils/injectionKeys'
 import { ignoredCharacters } from '@/utils/ignoredCharacters'
 
@@ -53,8 +54,7 @@ const handleRestart = (event?: Event) => {
   updateScroll()
 }
 
-const handleModalClick = (event: Event) => {
-  event.preventDefault()
+const handleStart = () => {
   emit('start')
   textElementRef.value?.focus()
 }
@@ -81,15 +81,8 @@ onMounted(() => {
 <template>
   <CustomDivider />
   <div class="typing-test-container">
-    <div
-      class="test-not-started-modal"
-      :class="modalOpen ? '' : 'hidden'"
-      @click="handleModalClick"
-    >
-      <button class="modal-start-button" @click="handleModalClick">Start Typing Test</button>
-      <p class="modal-text">Or click the text and start typing</p>
-    </div>
-    <div class="text-wrapper" tabindex="-1" @click="handleModalClick">
+    <AppTypingTestStartModal :show="modalOpen" @start="handleStart" />
+    <div class="text-wrapper" tabindex="-1" @click="textElementRef?.focus()">
       <p class="text" tabindex="-1" ref="text-ref">
         <span
           class="word"
@@ -123,36 +116,6 @@ onMounted(() => {
   flex-direction: column;
   flex-grow: 1;
   margin: 1rem 0 1rem 0;
-}
-
-/* Modal */
-
-.test-not-started-modal {
-  position: absolute;
-  /* visibility: hidden; */
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  backdrop-filter: blur(0.2rem);
-  left: -10px;
-  top: 0;
-  width: calc(100% + 20px);
-  height: 100%;
-  z-index: 100;
-
-  .modal-start-button {
-    border: none;
-    padding: 0.6rem 1rem 0.6rem 1rem;
-    background-color: var(--colors-blue-600);
-    color: var(--colors-neutral-0);
-    width: fit-content;
-  }
-
-  .modal-start-button:hover {
-    background-color: var(--colors-blue-400);
-  }
 }
 
 /* Text */
