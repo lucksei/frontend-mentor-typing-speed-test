@@ -27,6 +27,27 @@ const handleModalClick = () => {
 </template>
 
 <style scoped>
+.modal-enter-active,
+.modal-leave-active {
+  transition: all 0.1s ease-in-out;
+}
+
+.modal-enter-from {
+  opacity: 0;
+}
+
+.modal-enter-to {
+  opacity: 1;
+}
+
+.modal-leave-from {
+  opacity: 1;
+}
+
+.modal-leave-to {
+  opacity: 0;
+}
+
 .start-modal {
   position: absolute;
   /* visibility: hidden; */

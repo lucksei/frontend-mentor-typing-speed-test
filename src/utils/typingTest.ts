@@ -1,18 +1,21 @@
 type Character = {
   id: number
   char: string
-  status: 'empty' | 'correct' | 'incorrect' | 'selected'
+  status?: 'correct' | 'incorrect' // The first status that is updated once when a character is typed. Cannot be corrected
+  isCorrect?: boolean // Current status of the character that is rendered on the screen. Can be corrected even after the word is finished
+  isFilled: boolean
+  isSelected?: boolean
 }
 
 type Word = {
   id: number
   word: Character[]
-  status: 'empty' | 'correct' | 'incorrect'
+  isFilled: boolean
 }
 
 type Cursor = {
   word_idx: number
-  char_idx: number | 'end'
+  char_idx: number
 }
 
 class TypingTest {
@@ -28,7 +31,7 @@ class TypingTest {
     return word.split('').map((char, index) => ({
       id: index,
       char,
-      status: 'empty',
+      isFilled: false,
     }))
   }
 
@@ -37,30 +40,47 @@ class TypingTest {
     return words.map((word, index) => ({
       id: index,
       word: this._wordToCharacterList(word),
-      status: 'empty',
+      isFilled: false,
     }))
   }
 
+  _isCursorAtEndOfWord(): boolean {
+    return this.cursor.char_idx === this.textArray[this.cursor.word_idx]!.word.length
+  }
+
+  _isCursorAtLastChar(): boolean {
+    return this.cursor.char_idx === this.textArray[this.cursor.word_idx]!.word.length - 1
+  }
+
+  _isCursorAtEndOfText(): boolean {
+    return this.cursor.word_idx === this.textArray.length - 1 && this._isCursorAtEndOfWord()
+  }
+
   _cursorAdvance(status: 'correct' | 'incorrect'): number {
-    const curr_word_length = this.textArray[this.cursor.word_idx]!.word.length
+    if (!this._isCursorAtEndOfWord()) {
+      const currentWord = this.textArray[this.cursor.word_idx]!
+      const currentChar = currentWord!.word[this.cursor.char_idx]!
 
-    if (typeof this.cursor.char_idx === 'number') {
-      this.textArray[this.cursor.word_idx]!.word[this.cursor.char_idx]!.status = status
-      if (this.cursor.char_idx === curr_word_length - 1) {
-        this.cursor.char_idx = 'end'
-        this.setWordStatus()
-        return 1
+      currentChar.isSelected = false
+      currentChar.isCorrect = status === 'correct'
+      if (!currentChar.status) currentChar.status = status
+
+      // Update cursor position
+      if (!this._isCursorAtLastChar()) {
+        this.cursor.char_idx += 1
+      } else {
+        currentWord.isFilled = true
       }
-      this.cursor.char_idx += 1
-      this.textArray[this.cursor.word_idx]!.word[this.cursor.char_idx]!.status = 'selected'
+      return 1
     }
-    if (this.cursor.char_idx === 'end') return 1
-
     return 0
   }
 
   _cursorAdvanceWord(): number {
-    const curr_text_length = this.textArray.length
+    const currentWord = this.textArray[this.cursor.word_idx]
+    const currentChar = currentWord!.word[this.cursor.char_idx]!
+
+    currentWord
 
     if (typeof this.cursor.char_idx === 'number') {
       this.textArray[this.cursor.word_idx]!.word[this.cursor.char_idx]!.status = 'empty'
@@ -110,7 +130,7 @@ class TypingTest {
 
     if (!this.textArray[0]) throw new Error('Text is empty')
     if (!this.textArray[0].word[0]) throw new Error('Text is empty')
-    this.textArray[0].word[0].status = 'selected'
+    this.textArray[0].word[0].isSelected = true
   }
 
   getText(): Word[] {
@@ -185,16 +205,6 @@ class TypingTest {
 
   getIsTestFinished(): boolean {
     return this.cursor.word_idx === this.textArray.length - 1 && this.cursor.char_idx === 'end'
-  }
-
-  setWordStatus() {
-    const currentWord = this.textArray[this.cursor.word_idx]
-    const incorrect = currentWord?.word.some((char) => char.status === 'incorrect')
-    if (incorrect) {
-      this.textArray[this.cursor.word_idx]!.status = 'incorrect'
-    } else {
-      this.textArray[this.cursor.word_idx]!.status = 'correct'
-    }
   }
 
   clearWordStatus() {
